@@ -1,4 +1,6 @@
-const SOUNDS_PATH = '../../../assets/sounds';
+import { ASSETS_BASE } from '../../constants/assets.js';
+
+const SOUNDS_PATH = `${ASSETS_BASE}sounds`;
 
 /**
  * @typedef {{ audio: HTMLAudioElement, interval: number }} SoundEntry

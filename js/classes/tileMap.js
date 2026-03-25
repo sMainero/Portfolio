@@ -1,6 +1,7 @@
 import { TILE_SIZE } from '../constants/game.js';
 import { SCALED_TILE_SIZE, TILE_SCALING_AMOUNT } from '../constants/tileset.js';
 import { AssetLoader } from '../utils/assetLoader.js';
+import { ASSETS_BASE } from '../constants/assets.js';
 
 // Tile IDs from the Pokemon RBY tileset that block movement.
 // Extend this set as you add more solid tile types from your tileset.
@@ -18,7 +19,7 @@ const SOLID_TILE_IDS = new Set([
 const TILES_PER_SHEET_ROW = 16;
 
 const loader = new AssetLoader();
-await loader.loadImage('tileset', '../assets/Pokemon_RBY_Tile_Set_01.png');
+await loader.loadImage('tileset', `${ASSETS_BASE}Pokemon_RBY_Tile_Set_01.png`);
 
 export class TileMap {
   constructor(mapData) {

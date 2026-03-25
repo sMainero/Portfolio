@@ -6,6 +6,7 @@ import {
 } from '../constants/player.js';
 import { AssetLoader } from '../utils/assetLoader.js';
 import { SfxPlayer } from './sounds/sfxPlayer.js';
+import { ASSETS_BASE } from '../constants/assets.js';
 
 const MAX_TARGET_X = CANVAS_WIDTH - TRAINER_SPRITE_SIZE;
 
@@ -21,7 +22,7 @@ const directions = {
 const loader = new AssetLoader();
 await loader.loadImage(
   'trainer',
-  '../assets/sprites/pokemon_gen_1_trainer_sprite.png',
+  `${ASSETS_BASE}sprites/pokemon_gen_1_trainer_sprite.png`,
 );
 
 const debugScale = 4;
