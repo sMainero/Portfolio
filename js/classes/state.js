@@ -30,15 +30,32 @@ export class State {
 
   restoreStateBackup() {
     const savedState = window.localStorage.getItem('state');
+
+    console.log(
+      '🚀 ~ state.js:35 ~ State ~ restoreStateBackup ~ savedState:',
+      savedState,
+    );
+
     if (savedState) {
-      const parsedState = JSON.parse(savedState);
-      this.player.x = parsedState.player?.x ?? null;
-      this.player.y = parsedState.player?.y ?? null;
-      this.player.direction = parsedState.player?.direction ?? 'down';
-      this.player.facingX = parsedState.player?.facingX ?? null;
-      this.player.facingY = parsedState.player?.facingY ?? null;
-      this.mapKey = parsedState.mapKey ?? null;
-      this.interactions = parsedState.interactions ?? {};
+      let parsedState = null;
+      try {
+        parsedState = JSON.parse(savedState);
+      } catch (err) {
+        console.error('Failed to parse saved state:', err);
+      }
+
+      console.log(
+        '🚀 ~ state.js:48 ~ State ~ restoreStateBackup ~ parsedState:',
+        parsedState,
+      );
+
+      this.player.x = parsedState?.player?.x ?? null;
+      this.player.y = parsedState?.player?.y ?? null;
+      this.player.direction = parsedState?.player?.direction ?? 'down';
+      this.player.facingX = parsedState?.player?.facingX ?? null;
+      this.player.facingY = parsedState?.player?.facingY ?? null;
+      this.mapKey = parsedState?.mapKey ?? null;
+      this.interactions = parsedState?.interactions ?? {};
     }
     return this.state;
   }
