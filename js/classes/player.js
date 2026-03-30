@@ -17,7 +17,7 @@ const directions = {
 
 await sharedLoader.loadImage(
   'trainer',
-  `${ASSETS_BASE}sprites/pokemon_gen_1_trainer_sprite_long_hair.png`,
+  `${ASSETS_BASE}sprites/pokemon_gen_1_trainer_sprite_long_hair_final.png`,
 );
 
 const debugScale = 4;
@@ -168,31 +168,31 @@ export class Player {
   // Frames keyed by direction — neutral + walk cycle per direction
   frames = {
     down: {
-      neutral: { x: 17, y: 0 },
+      neutral: { x: 0, y: 0 },
       walk: [
-        { x: 17, y: 17 },
-        { x: 17, y: 33 },
+        { x: 0, y: 17 },
+        { x: 0, y: 33 },
       ],
     },
     up: {
-      neutral: { x: 33, y: 0 },
+      neutral: { x: 16, y: 0 },
       walk: [
-        { x: 33, y: 17 },
-        { x: 33, y: 33 },
+        { x: 16, y: 17 },
+        { x: 16, y: 33 },
       ],
     },
     left: {
-      neutral: { x: 49, y: 0 },
+      neutral: { x: 32, y: 0 },
       walk: [
-        { x: 49, y: 17 },
-        { x: 49, y: 17 },
+        { x: 32, y: 17 },
+        { x: 32, y: 17 },
       ],
     },
     right: {
-      neutral: { x: 65, y: 0 },
+      neutral: { x: 48, y: 0 },
       walk: [
-        { x: 65, y: 17 },
-        { x: 65, y: 17 },
+        { x: 48, y: 17 },
+        { x: 48, y: 17 },
       ],
     },
   };

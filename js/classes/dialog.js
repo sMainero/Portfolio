@@ -1,4 +1,5 @@
 import {
+  DIALOG_BORDER_TILE_SIZE,
   DIALOG_CHARS_PER_FRAME,
   DIALOG_CHARACTER_WIDTH,
   DIALOG_FONT,
@@ -6,12 +7,20 @@ import {
   DIALOG_LINES_PER_PAGE,
   DIALOG_MARGIN,
   DIALOG_PADDING,
+  DIALOG_BORDER_SCALE,
 } from '../constants/dialog.js';
 import { CANVAS_WIDTH } from '../constants/game.js';
+import { ASSETS_BASE } from '../constants/assets.js';
+import { sharedLoader } from '../utils/assetLoader.js';
 
 const MAX_CHARS_PER_LINE = Math.floor(
   (CANVAS_WIDTH - DIALOG_MARGIN * 2 - DIALOG_PADDING * 2) /
     DIALOG_CHARACTER_WIDTH,
+);
+
+await sharedLoader.loadImage(
+  'dialogBorder',
+  `${ASSETS_BASE}borders/BorderTileSet.png`,
 );
 
 export class Dialog {
@@ -119,13 +128,76 @@ export class Dialog {
     const BOX_X = DIALOG_MARGIN;
     const BOX_Y = game.height - BOX_H - DIALOG_MARGIN;
 
-    context.fillStyle = 'rgba(255,255,255,1)';
-    context.strokeStyle = 'black';
-    context.lineWidth = 2;
-    context.beginPath();
-    context.roundRect(BOX_X, BOX_Y, BOX_W, BOX_H, 6);
-    context.fill();
-    context.stroke();
+    const TILE = DIALOG_BORDER_TILE_SIZE * DIALOG_BORDER_SCALE;
+    const border = sharedLoader.get('dialogBorder');
+    const innerX = BOX_X + TILE;
+    const innerY = BOX_Y + TILE;
+    const innerW = BOX_W - TILE * 2;
+    const innerH = BOX_H - TILE * 2;
+
+    context.imageSmoothingEnabled = false;
+    // fill
+    context.drawImage(border, 8, 8, 8, 8, innerX, innerY, innerW, innerH);
+    // edges
+    context.drawImage(border, 8, 0, 8, 8, innerX, BOX_Y, innerW, TILE); // top
+    context.drawImage(
+      border,
+      8,
+      16,
+      8,
+      8,
+      innerX,
+      BOX_Y + BOX_H - TILE,
+      innerW,
+      TILE,
+    ); // bottom
+    context.drawImage(border, 0, 8, 8, 8, BOX_X, innerY, TILE, innerH); // left
+    context.drawImage(
+      border,
+      16,
+      8,
+      8,
+      8,
+      BOX_X + BOX_W - TILE,
+      innerY,
+      TILE,
+      innerH,
+    ); // right
+    // corners
+    context.drawImage(border, 0, 0, 8, 8, BOX_X, BOX_Y, TILE, TILE); // TL
+    context.drawImage(
+      border,
+      16,
+      0,
+      8,
+      8,
+      BOX_X + BOX_W - TILE,
+      BOX_Y,
+      TILE,
+      TILE,
+    ); // TR
+    context.drawImage(
+      border,
+      0,
+      16,
+      8,
+      8,
+      BOX_X,
+      BOX_Y + BOX_H - TILE,
+      TILE,
+      TILE,
+    ); // BL
+    context.drawImage(
+      border,
+      16,
+      16,
+      8,
+      8,
+      BOX_X + BOX_W - TILE,
+      BOX_Y + BOX_H - TILE,
+      TILE,
+      TILE,
+    ); // BR
 
     context.fillStyle = 'black';
 
