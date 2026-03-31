@@ -1,22 +1,20 @@
 import { startGameCourse } from './courseWay.js';
-import { testThree, animateCamera } from './3d/index.js';
-import {
-  GAME_CAMERA_ANIMATION,
-  RESET_CAMERA_ANIMATION,
-} from './constants/three.js';
+import { renderScreen } from './3d/index.js';
+import { resetCameraAnimation } from './3d/helpers/resetCameraAnimation.js';
+import { gameCameraAnimation } from './3d/helpers/gameCameraAnimation.js';
 
 window.onload = () => {
   // startGame();
   startGameCourse(mainCanvas);
-  testThree({ secondaryCanvas });
+  renderScreen({ secondaryCanvas });
 };
 
 export const resetCamera = () => {
-  animateCamera(RESET_CAMERA_ANIMATION);
+  resetCameraAnimation();
 };
 
 export const setGameCamera = () => {
-  animateCamera(GAME_CAMERA_ANIMATION);
+  gameCameraAnimation();
 };
 
 window.resetCamera = resetCamera;
