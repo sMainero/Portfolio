@@ -3,9 +3,14 @@
   max-width: 100%;
   height: auto;
 }
-.3d-canvas-container {
+
+.canvas-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
+}
+.game-container {
+  visibility: hidden;
+  display: none;
 }
