@@ -4,7 +4,7 @@ import { INITIAL_CAMERA_POSITION } from '../../constants/three.js';
 
 export const camera = new PerspectiveCamera(
   60,
-  secondaryCanvas.clientWidth / secondaryCanvas.clientHeight,
+  renderCanvas.clientWidth / renderCanvas.clientHeight,
   0.1,
   10,
 );

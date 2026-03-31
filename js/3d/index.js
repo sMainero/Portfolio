@@ -32,7 +32,7 @@ scene.add(ambientLight);
 scene.add(particles);
 
 const dotMatrixMaterial = dotMatrixMaterialBuilder(canvasTexture);
-export const renderScreen = ({ secondaryCanvas }) => {
+export const renderScreen = ({ renderCanvas }) => {
   // 📦 Load model
   const loader = new GLTFLoader();
 
@@ -109,11 +109,11 @@ export const renderScreen = ({ secondaryCanvas }) => {
 
   // 📱 Resize handling
   window.addEventListener('resize', () => {
-    camera.aspect = secondaryCanvas.clientWidth / secondaryCanvas.clientHeight;
+    camera.aspect = renderCanvas.clientWidth / renderCanvas.clientHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(
-      secondaryCanvas.clientWidth,
-      secondaryCanvas.clientHeight,
+      renderCanvas.clientWidth,
+      renderCanvas.clientHeight,
       false,
     );
   });

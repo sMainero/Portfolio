@@ -1,12 +1,12 @@
-import { startGameCourse } from './courseWay.js';
 import { renderScreen } from './3d/index.js';
 import { resetCameraAnimation } from './3d/helpers/resetCameraAnimation.js';
 import { gameCameraAnimation } from './3d/helpers/gameCameraAnimation.js';
+import { startGame } from './startGame.js';
 
 window.onload = () => {
   // startGame();
-  startGameCourse(mainCanvas);
-  renderScreen({ secondaryCanvas });
+  startGame(mainCanvas);
+  renderScreen({ renderCanvas });
 };
 
 export const resetCamera = () => {

@@ -2,7 +2,7 @@ import { Game } from './classes/game.js';
 import { CANVAS_HEIGHT, CANVAS_SCALE, CANVAS_WIDTH } from './constants/game.js';
 import { MainRoomMap } from './maps/mainRoom/index.js';
 
-export const startGameCourse = (canvas) => {
+export const startGame = (canvas) => {
   const ctx = canvas.getContext('2d');
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;

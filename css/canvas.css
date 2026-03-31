@@ -2,6 +2,9 @@
   border: solid black 1px;
   max-width: 100%;
   height: auto;
+  width: 100svw;
+  height: 60svh;
+  touch-action: auto !important;
 }
 
 .canvas-container {
