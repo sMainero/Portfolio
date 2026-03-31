@@ -42,14 +42,14 @@ export class InputHandler {
       el.addEventListener('touchend', onTouchEnd(key));
       el.addEventListener('touchcancel', onTouchEnd(key));
     }
-    canvas.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', (e) => {
       if (ALLOWED_KEYS.includes(e.key)) {
         e.preventDefault(); // stop arrow keys from scrolling the page
         if (this.keys.indexOf(e.key) === -1) this.keys.push(e.key);
       }
     });
 
-    canvas.addEventListener('keyup', (e) => {
+    window.addEventListener('keyup', (e) => {
       if (ALLOWED_KEYS.includes(e.key)) {
         this.keys.splice(this.keys.indexOf(e.key), 1);
       }

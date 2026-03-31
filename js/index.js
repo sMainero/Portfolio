@@ -1,5 +1,5 @@
 import { startGameCourse } from './courseWay.js';
-import { testThree, animateCamera } from './threeTest.js';
+import { testThree, animateCamera } from './3d/index.js';
 import {
   GAME_CAMERA_ANIMATION,
   RESET_CAMERA_ANIMATION,
