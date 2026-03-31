@@ -7,6 +7,8 @@
 
 html {
   font-size: 20px;
+  -webkit-user-scalable: no;
+  user-scalable: no;
 }
 body {
   font-family: Pokemon;
