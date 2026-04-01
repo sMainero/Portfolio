@@ -71,6 +71,9 @@ body {
   align-items: flex-end;
   gap: 1rem;
 }
+.invert {
+  filter: invert(1);
+}
 
 @media (max-width: 600px) {
   html {
