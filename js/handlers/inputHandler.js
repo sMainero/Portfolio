@@ -59,7 +59,8 @@ export class InputHandler {
 
     window.addEventListener('keyup', (e) => {
       if (ALLOWED_KEYS.includes(e.key)) {
-        this.keys.splice(this.keys.indexOf(e.key), 1);
+        const idx = this.keys.indexOf(e.key);
+        if (idx !== -1) this.keys.splice(idx, 1);
       }
     });
   }

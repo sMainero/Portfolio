@@ -381,11 +381,6 @@ export class GameBoy {
   _syncKeyboardState() {
     const keys = inputHandler.instance?.keys;
 
-    console.log(
-      '🚀 ~ GameBoy.js:385 ~ GameBoy ~ _syncKeyboardState ~ keys:',
-      keys,
-    );
-
     if (!keys) return;
 
     const up = keys.includes(CONTROL_KEYS.ArrowUp);
