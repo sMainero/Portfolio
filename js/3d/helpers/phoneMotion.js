@@ -9,8 +9,18 @@ export const createPhoneMotion = ({ domElement }) => {
     motion.z = acceleration?.z ?? 0;
   };
 
-  const enablePhoneMotion = () => {
+  const enablePhoneMotion = async () => {
     if (isEnabled) return;
+
+    // iOS Safari 13+ requires explicit permission from a user gesture.
+    if (
+      typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function'
+    ) {
+      const permission = await DeviceMotionEvent.requestPermission();
+      if (permission !== 'granted') return;
+    }
+
     window.addEventListener('devicemotion', phoneMotionHandler);
     isEnabled = true;
   };
@@ -24,8 +34,6 @@ export const createPhoneMotion = ({ domElement }) => {
     motion.y = 0;
     motion.z = 0;
   };
-
-  enablePhoneMotion();
 
   return {
     motion,
