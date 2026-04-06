@@ -1,10 +1,22 @@
 import { WebGLRenderer } from 'three';
 
-// 🖥️ Renderer
-export const renderer = new WebGLRenderer({
-  canvas: renderCanvas,
-  antialias: true,
-});
-// false = don't override the CSS size set by the layout
+export class RendererContext {
+  _renderer = null;
 
-renderer.setSize(renderCanvas.clientWidth, renderCanvas.clientHeight, false);
+  constructor({ canvas }) {
+    this._renderer = new WebGLRenderer({
+      canvas,
+      antialias: true,
+    });
+
+    // false = don't override the CSS size set by the layout
+    this._renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+  }
+
+  get renderer() {
+    return this._renderer;
+  }
+}
+
+export const rendererContext = new RendererContext({ canvas: renderCanvas });
+export const renderer = rendererContext.renderer;

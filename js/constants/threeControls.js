@@ -11,10 +11,10 @@ export const CONTROL_KEYS = {
 export const BUTTON_PRESS_DEPTH = 0.02;
 
 export const DPAD_ZONE = {
-  minX: 0.1,
-  maxX: 0.95,
-  minZ: 0.08,
-  maxZ: 0.9,
+  minX: 0.02,
+  maxX: 1,
+  minZ: 0.02,
+  maxZ: 1,
   centerX: 0.55,
   centerZ: 0.49,
   deadZone: 0.03,
