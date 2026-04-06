@@ -1,5 +1,6 @@
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { loadingManager } from '../../utils/loadingManager.js';
+import { ASSETS_BASE } from '../../constants/assets.js';
 
 /**
  *
@@ -30,7 +31,7 @@ export class GltfModelLoader {
     this.progress = 0;
     this.loader = new GLTFLoader();
     this.unloadedModels = {
-      gameboy: '/assets/models/GBC.glb',
+      gameboy: `${ASSETS_BASE}/models/GBC.glb`,
     };
     this.loadedModels = {};
     this.loadingPromises = {};
@@ -38,7 +39,7 @@ export class GltfModelLoader {
 
   loadModel(modelName) {
     console.log(
-      '🚀 ~ gltfLoader.js:41 ~ GltfModelLoader ~ loadModel ~ modelName:',
+      '🚀 ~ gltfLoader.js:42 ~ GltfModelLoader ~ loadModel ~ modelName:',
       modelName,
     );
 
@@ -50,7 +51,7 @@ export class GltfModelLoader {
       const modelPath = this.unloadedModels[modelName];
 
       console.log(
-        '🚀 ~ gltfLoader.js:53 ~ GltfModelLoader ~ loadModel ~ modelPath:',
+        '🚀 ~ gltfLoader.js:54 ~ GltfModelLoader ~ loadModel ~ modelPath:',
         modelPath,
       );
 
