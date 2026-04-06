@@ -28,47 +28,32 @@ export class InputHandler {
       B: controlKeyB,
     };
 
-    const onTouchEnd = (key) => {
-      return (e) => {
-        e.preventDefault();
-        e.currentTarget.classList.remove('pressed');
-
-        const idx = this.keys.indexOf(key);
-        if (idx !== -1) this.keys.splice(idx, 1);
-      };
-    };
-
-    for (const [key, el] of Object.entries(this.virtualKeys)) {
-      el.addEventListener('touchstart', (e) => {
-        el.classList.add('pressed');
-
-        let pressedKey = key;
-        if (key === 'A') pressedKey = 'Enter'; // map virtual "A" button to "Enter" key
-        if (key === 'B') return; // ignore "B" button for now since it has no in-game function
-        if (this.keys.indexOf(pressedKey) === -1) this.keys.push(pressedKey);
-      });
-      el.addEventListener('touchend', onTouchEnd(key));
-      el.addEventListener('touchcancel', onTouchEnd(key));
-    }
     window.addEventListener('keydown', (e) => {
-      if (ALLOWED_KEYS.includes(e.key)) {
+      if (ALLOWED_KEYS.includes(e.key) && !e.repeat) {
         e.preventDefault(); // stop arrow keys from scrolling the page
-        if (!e.repeat && this.keys.indexOf(e.key) === -1) this.keys.push(e.key);
+        this._addKey(e.key);
       }
     });
 
     window.addEventListener('keyup', (e) => {
       if (ALLOWED_KEYS.includes(e.key)) {
-        const idx = this.keys.indexOf(e.key);
-        if (idx !== -1) this.keys.splice(idx, 1);
+        this._removeKey(e.key);
       }
     });
   }
 
-  /** Removes a key immediately — forces the user to release and re-press to trigger again. */
-  consumeKey(key) {
+  _addKey(key) {
+    if (this.keys.indexOf(key) === -1) this.keys.push(key);
+  }
+
+  _removeKey(key) {
     const idx = this.keys.indexOf(key);
     if (idx !== -1) this.keys.splice(idx, 1);
+  }
+
+  /** Removes a key immediately — forces the user to release and re-press to trigger again. */
+  consumeKey(key) {
+    this._removeKey(key);
   }
 
   static init() {

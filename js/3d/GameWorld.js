@@ -36,7 +36,7 @@ import { ambientLight } from './light/ambientLight.js';
 export class World {
   _entities = [];
   _meshToEntity = new Map();
-  _activeButton = null;
+  _activeButtons = new Map();
 
   _raycaster = new THREE.Raycaster();
   _pointer = new THREE.Vector2();
@@ -129,18 +129,23 @@ export class World {
     const key = entity.resolveKey(intersection);
     if (!key) return;
 
-    this._activeButton = { key, mesh: intersection.object, entity };
+    this._activeButtons.set(event.pointerId, {
+      key,
+      mesh: intersection.object,
+      entity,
+    });
     entity.onPress(intersection.object, key);
     this._dispatchGameKey('keydown', key);
     event.preventDefault();
   };
 
   _onPointerUp = (event) => {
-    if (!this._activeButton) return;
-    const { key, mesh, entity } = this._activeButton;
+    const active = this._activeButtons.get(event.pointerId);
+    if (!active) return;
+    const { key, mesh, entity } = active;
     entity.onRelease(mesh, key);
     this._dispatchGameKey('keyup', key);
-    this._activeButton = null;
+    this._activeButtons.delete(event.pointerId);
     event.preventDefault();
   };
 
