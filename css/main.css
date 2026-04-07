@@ -201,7 +201,7 @@ body {
   position: absolute;
   display: flex;
   flex-direction: column;
-  top: 0.5rem;
+  top: 14px;
   right: 0.5rem;
   align-items: flex-end;
   gap: 1rem;
