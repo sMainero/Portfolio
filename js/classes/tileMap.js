@@ -1,23 +1,14 @@
+import { createTileReference } from '../utils/tileReference.js';
+
 /**
  * @typedef {{ sheetName: string, tileIndex: number }} TileReference
  */
 
 /**
- * Preferred helper for authoring tiles from non-default sheets.
- * Example: createTileReference('indoors', 12)
- * @param {string} sheetName
- * @param {number} tileIndex
- * @returns {TileReference}
- */
-export const createTileReference = (sheetName, tileIndex) => ({
-  sheetName,
-  tileIndex,
-});
-
-/**
  * TileMap handles rendering the tilemap and collision detection based on a 2D array of tile IDs.
  * @param {Array<Array<number|string|TileReference>>} mapData - 2D array of tile IDs or tile references, indexed as [row][col].
- * @param {Set<number|string|TileReference>} solidTileIds - Set of tile IDs or tile references that are solid.
+ * @param {Set<number|string|TileReference>|Record<string, Set<number|string|TileReference>>} solidTileIds
+ *   Set of solid tile IDs/references or a map of tileset name to solid IDs.
  * @param {number} scaledTileSize - Size of each tile on the canvas in pixels.
  * @param {number} tileScaling - Scale factor applied when drawing tiles.
  * @param {Record<string, {image: HTMLImageElement, width: number, height: number, tileSize: number}>} tileSheets
@@ -164,6 +155,23 @@ export class TileMap {
 
   normalizeSolidTileIds(solidTileIds) {
     const resolvedSolidTileIds = new Set();
+
+    if (!(solidTileIds instanceof Set)) {
+      for (const [sheetName, tileIds] of Object.entries(solidTileIds)) {
+        for (const tileReference of tileIds) {
+          if (typeof tileReference === 'number') {
+            resolvedSolidTileIds.add(
+              this.resolveTile({ sheetName, tileIndex: tileReference }).key,
+            );
+            continue;
+          }
+
+          resolvedSolidTileIds.add(this.resolveTile(tileReference).key);
+        }
+      }
+
+      return resolvedSolidTileIds;
+    }
 
     for (const tileReference of solidTileIds) {
       resolvedSolidTileIds.add(this.resolveTile(tileReference).key);

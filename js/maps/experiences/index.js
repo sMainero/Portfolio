@@ -8,22 +8,22 @@ import {
   SCALED_TILE_SIZE,
   TILE_SCALING_AMOUNT,
 } from '../../constants/tileset.js';
-import { MAP_MAIN_TOWN } from './constants.js';
 import {
   RBY_TILESET_NAME,
   RBY_TILESET_SOLID_TILE_IDS,
   loadRbyTileset,
 } from '../../tilesets/index.js';
+import { MAP_EXPERIENCES_ROOM } from './constants.js';
 
 const rbyTileset = await loadRbyTileset();
 
 /**
  * @extends {TileMap}
  */
-export class TownMap extends TileMap {
+export class ExperiencesRoomMap extends TileMap {
   constructor() {
     super(
-      MAP_MAIN_TOWN,
+      MAP_EXPERIENCES_ROOM,
       {
         [RBY_TILESET_NAME]: RBY_TILESET_SOLID_TILE_IDS,
       },
@@ -36,14 +36,13 @@ export class TownMap extends TileMap {
       new Portal([
         {
           targetMap: 'mainRoom',
-          targetX: TRAINER_SPRITE_SIZE * 6,
-          targetY: TRAINER_SPRITE_SIZE * 1,
-          x: TRAINER_SPRITE_SIZE * 9,
-
-          y: TRAINER_SPRITE_SIZE,
+          targetX: TRAINER_SPRITE_SIZE * 3,
+          targetY: TRAINER_SPRITE_SIZE * 0,
+          x: TRAINER_SPRITE_SIZE * 1,
+          y: TRAINER_SPRITE_SIZE * 7,
         },
       ]),
-      'town',
+      'experiences',
     );
   }
 }
