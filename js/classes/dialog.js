@@ -28,8 +28,8 @@ export class Dialog {
    * @param {string} text
    */
   constructor(text) {
-    // Collapse newlines and extra whitespace into single spaces
-    this._text = text.replace(/\s+/g, ' ').trim();
+    // Collapse horizontal whitespace only — preserve explicit \n line breaks
+    this._text = text.replace(/[^\S\n]+/g, ' ').trim();
     this._wrappedLines = this._wrapLines();
     this.lineOffset = 0;
     this.charIndex = 0;
@@ -42,19 +42,25 @@ export class Dialog {
   }
 
   _wrapLines() {
-    const words = this._text.split(' ');
     const lines = [];
-    let current = '';
-    for (const word of words) {
-      const test = current ? `${current} ${word}` : word;
-      if (test.length > MAX_CHARS_PER_LINE) {
-        if (current) lines.push(current);
-        current = word;
-      } else {
-        current = test;
+    for (const segment of this._text.split('\n')) {
+      if (!segment.trim()) {
+        lines.push('');
+        continue;
       }
+      const words = segment.split(' ');
+      let current = '';
+      for (const word of words) {
+        const test = current ? `${current} ${word}` : word;
+        if (test.length > MAX_CHARS_PER_LINE) {
+          if (current) lines.push(current);
+          current = word;
+        } else {
+          current = test;
+        }
+      }
+      if (current) lines.push(current);
     }
-    if (current) lines.push(current);
     return lines;
   }
 
