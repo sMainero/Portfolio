@@ -296,30 +296,21 @@ export class GameBoy {
     const xN = (localPoint.x - bounds.min.x) / width;
     const zN = (localPoint.z - bounds.min.z) / depth;
 
-    if (
-      this._isNear(xN, ACTION_ZONE_A.centerX, ACTION_ZONE_A.halfSize) &&
-      this._isNear(zN, ACTION_ZONE_A.centerZ, ACTION_ZONE_A.halfSize)
-    ) {
-      return CONTROL_KEYS.A;
-    }
-
-    if (
-      this._isNear(xN, ACTION_ZONE_B.centerX, ACTION_ZONE_B.halfSize) &&
-      this._isNear(zN, ACTION_ZONE_B.centerZ, ACTION_ZONE_B.halfSize)
-    ) {
-      return CONTROL_KEYS.B;
-    }
-
-    const dx = xN - DPAD_ZONE.centerX;
-    const dz = zN - DPAD_ZONE.centerZ;
-
+    // D-pad bounds are checked first. Any hit inside the D-pad area must
+    // resolve as a direction or nothing — it must never bleed into A/B zones,
+    // even when it lands in the dead zone at the centre.
     const inDpadBounds =
       this._isInBox(xN, DPAD_ZONE.minX, DPAD_ZONE.maxX) &&
       this._isInBox(zN, DPAD_ZONE.minZ, DPAD_ZONE.maxZ);
-    const outsideDeadZone =
-      Math.abs(dx) > DPAD_ZONE.deadZone || Math.abs(dz) > DPAD_ZONE.deadZone;
 
-    if (inDpadBounds && outsideDeadZone) {
+    if (inDpadBounds) {
+      const dx = xN - DPAD_ZONE.centerX;
+      const dz = zN - DPAD_ZONE.centerZ;
+      const outsideDeadZone =
+        Math.abs(dx) > DPAD_ZONE.deadZone || Math.abs(dz) > DPAD_ZONE.deadZone;
+
+      if (!outsideDeadZone) return null;
+
       if (Math.abs(dx) > Math.abs(dz)) {
         if (dx > 0) {
           this._dpadTarget.x = 0;
@@ -342,16 +333,20 @@ export class GameBoy {
       }
     }
 
-    console.log('[3d-buttons] Unmapped hit zone', {
-      name: object.name,
-      xN: Number(xN.toFixed(3)),
-      zN: Number(zN.toFixed(3)),
-      localX: Number(localPoint.x.toFixed(3)),
-      localY: Number(localPoint.y.toFixed(3)),
-      localZ: Number(localPoint.z.toFixed(3)),
-      uvX: Number((intersection.uv?.x ?? 0).toFixed(3)),
-      uvY: Number((intersection.uv?.y ?? 0).toFixed(3)),
-    });
+    // Only reach A/B zones for hits outside the D-pad bounding area.
+    if (
+      this._isNear(xN, ACTION_ZONE_A.centerX, ACTION_ZONE_A.halfSize) &&
+      this._isNear(zN, ACTION_ZONE_A.centerZ, ACTION_ZONE_A.halfSize)
+    ) {
+      return CONTROL_KEYS.A;
+    }
+
+    if (
+      this._isNear(xN, ACTION_ZONE_B.centerX, ACTION_ZONE_B.halfSize) &&
+      this._isNear(zN, ACTION_ZONE_B.centerZ, ACTION_ZONE_B.halfSize)
+    ) {
+      return CONTROL_KEYS.B;
+    }
 
     return null;
   }
