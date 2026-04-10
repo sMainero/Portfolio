@@ -10,7 +10,7 @@ import { scene } from './scene.js';
 import { controls } from './controls/controls.js';
 import { cursor } from './helpers/cursorController.js';
 import { motion, isMotionEnabled } from './helpers/phoneMotionController.js';
-import { renderer } from './renderer/renderer.js';
+import { renderer, composer } from './renderer/renderer.js';
 import { directionalLight } from './light/directionalLight.js';
 import { ambientLight } from './light/ambientLight.js';
 
@@ -206,7 +206,7 @@ export class World {
 
     controls.update();
     updateParticles(camera.position);
-    renderer.render(scene, camera);
+    composer.render();
   };
 
   _onResize(renderCanvas) {
@@ -217,5 +217,6 @@ export class World {
       renderCanvas.clientHeight,
       false,
     );
+    composer.setSize(renderCanvas.clientWidth, renderCanvas.clientHeight);
   }
 }

@@ -12,6 +12,7 @@ import {
 } from '../constants/threeControls.js';
 import { inputHandler } from '../handlers/inputHandler.js';
 import { gltfModelLoader } from './helpers/gltfLoader.js';
+import { screenLight } from './light/screenPointLight.js';
 
 const CASE_COLOR = 0x8953a9;
 
@@ -173,6 +174,16 @@ export class GameBoy {
   /** Overlay a clean PlaneGeometry carrying the dot-matrix canvas texture. */
   _setupScreen(child) {
     const screenParent = child.parent;
+
+    // Point light so the screen casts green light onto surrounding geometry
+    screenLight.position.copy(child.position);
+    screenLight.position.y -= 0.55; // nudge up so it doesn't get blocked by the plane
+    screenLight.position.z += 0.4; // nudge up so it doesn't get blocked by the plane
+    // screenLight.position.z += 0.4; // nudge up so it doesn't get blocked by the plane
+
+    screenLight.needsUpdate = true;
+    screenParent.add(screenLight);
+
     const geo = new THREE.PlaneGeometry(1, 1);
     const plane = new THREE.Mesh(geo, this._dotMatrixMaterial);
 

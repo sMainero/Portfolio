@@ -1,10 +1,15 @@
-import { ShaderMaterial, Vector2 } from 'three';
+import { ShaderMaterial, Vector2, Color } from 'three';
 import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../../constants/game.js';
 
 export const dotMatrixMaterialBuilder = (texture) => {
   const dotMatrixMaterial = new ShaderMaterial({
     uniforms: {
       map: { value: texture },
+      emissiveStrength: { value: 1.2 },
+      emissiveThreshold: { value: 0.6 },
+      // emissive: new Color(0xffffff),
+      // emissiveMap: texture,
+      // emissiveIntensity: 50,
       // resolution: { value: new Vector2(160, 144) }, // GBC native resolution
       resolution: {
         value: new Vector2(CANVAS_WIDTH, CANVAS_HEIGHT),
@@ -24,6 +29,8 @@ export const dotMatrixMaterialBuilder = (texture) => {
         uniform vec2 resolution;
         uniform float gapSize;
         uniform float gapBrightness;
+        uniform float emissiveStrength;
+uniform float emissiveThreshold;
         varying vec2 vUv;
   
         void main() {
@@ -41,7 +48,7 @@ export const dotMatrixMaterialBuilder = (texture) => {
           // Sample the colour at the centre of this pixel cell
           vec2 sampleUv = (cellIndex + 0.5) / resolution;
           vec4 col = texture2D(map, sampleUv);
-  
+  col.rgb = pow(col.rgb, vec3(2.5)); // darkens bright pixels slightly
           // Square pixel mask with anti-aliased edges.
           // Only computed when the grid is actually visible (avoids Moiré when zoomed out).
           float hw = gapSize * 0.5;
@@ -60,7 +67,17 @@ export const dotMatrixMaterialBuilder = (texture) => {
           vec2 vig = vUv * (1.0 - vUv.yx);
           col.rgb *= pow(clamp(vig.x * vig.y * 15.0, 0.0, 1.0), 0.18);
   
-          gl_FragColor = col;
+          // Convert to brightness (luminance)
+float brightness = dot(col.rgb, vec3(0.299, 0.587, 0.114));
+
+// Only boost bright pixels
+float emissive = smoothstep(emissiveThreshold, 1.0, brightness);
+
+// Add glow (HDR boost)
+col.rgb += col.rgb * emissive * emissiveStrength;
+
+gl_FragColor = col;
+
         }
       `,
   });

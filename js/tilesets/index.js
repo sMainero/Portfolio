@@ -10,3 +10,9 @@ export {
   completeTileBuilder,
   loadCompleteTileset,
 } from './completeTileset.js';
+export {
+  LOGOS_TILESET_NAME,
+  LOGOS_TILESET_SOLID_TILE_IDS,
+  logosTileBuilder,
+  loadLogosTileset,
+} from './logosTileset.js';
