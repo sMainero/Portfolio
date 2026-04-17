@@ -274,6 +274,13 @@ export class Button extends SceneObject {
 
   hit(e) {
     window.switchCameraMode?.();
+    let spins = 16;
+    for (let i = 0; i < 16; i++) {
+      setTimeout(() => {
+        this.mesh.rotation.x += Math.PI / 8;
+        // this.mesh.rotation.y += Math.PI / 8;
+      }, i * 50);
+    }
   }
   resolveKey() {
     return;
@@ -282,15 +289,14 @@ export class Button extends SceneObject {
     this._elapsedTime += deltaSeconds;
     super.onFrame(deltaSeconds);
     if (this._isHovered) {
-      this._spinAccum += deltaSeconds;
-      while (this._spinAccum >= this._spinInterval) {
-        this._spinAccum -= this._spinInterval;
-        this.mesh.rotation.x += this._spinStep;
-      }
-      // this.mesh.position.y = this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
+      this.mesh.position.y =
+        this._baseY + Math.sin(this._elapsedTime * 4) * deltaSeconds * 2;
     } else {
-      this._spinAccum = 0;
-      //   this.mesh.position.y += (this._baseY - this.mesh.position.y) * 0.15;
+      if (this.mesh.position.y !== this._baseY) {
+        this.mesh.position.y +=
+          (this._baseY - this.mesh.position.y) * deltaSeconds * 10;
+      }
     }
+    // this.mesh.position.y = this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
   }
 }
