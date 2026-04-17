@@ -288,15 +288,15 @@ export class Button extends SceneObject {
   onFrame(deltaSeconds) {
     this._elapsedTime += deltaSeconds;
     super.onFrame(deltaSeconds);
+
+    const targetY =
+      this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
+    const smoothing = Math.min(deltaSeconds * 10, 1);
+
     if (this._isHovered) {
-      this.mesh.position.y =
-        this._baseY + Math.sin(this._elapsedTime * 4) * deltaSeconds * 2;
+      this.mesh.position.y += (targetY - this.mesh.position.y) * smoothing;
     } else {
-      if (this.mesh.position.y !== this._baseY) {
-        this.mesh.position.y +=
-          (this._baseY - this.mesh.position.y) * deltaSeconds * 10;
-      }
+      this.mesh.position.y += (this._baseY - this.mesh.position.y) * smoothing;
     }
-    // this.mesh.position.y = this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
   }
 }
