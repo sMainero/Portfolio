@@ -70,7 +70,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
 }
 .loading-text-container {
   width: 100%;
@@ -102,6 +102,9 @@ body {
   width: 0%;
   background-color: var(--border-color);
   transition: width 0.25s ease;
+}
+.start-button {
+  margin-top: 1rem;
 }
 .start-button-text {
   animation: pulse 2s ease-in-out infinite;

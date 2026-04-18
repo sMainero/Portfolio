@@ -19,7 +19,7 @@ const startLoadingTextInterval = () => {
   if (!dotsInverval) {
     dotIndex = 0;
     dotsInverval = setInterval(() => {
-      if (textElement) textElement.textContent = `Loading${dots[dotIndex]}`;
+      if (textElement) textElement.textContent = `Booting up${dots[dotIndex]}`;
       dotIndex = (dotIndex + 1) % dots.length;
     }, 500);
   }
@@ -41,6 +41,7 @@ const _flush = () => {
   if (barElement) barElement.style.width = `${percentage}%`;
   if (percentage >= 100 && buttonElement) {
     clearLoadingTextInterval();
+    if (textElement) textElement.textContent = 'System ready';
     buttonElement.hidden = false;
   }
 };
