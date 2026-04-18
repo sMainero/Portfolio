@@ -1,111 +1,81 @@
-import { ASSETS_BASE } from '../../constants/assets.js';
+// Shared AudioContext — one per page, never closed.
+// Must be created before the first user gesture so the instance exists;
+// it starts suspended and is resumed inside the gesture handler below.
+const _ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-const SOUNDS_PATH = `${ASSETS_BASE}sounds`;
-
-/**
- * Resumes (and immediately closes) a throwaway AudioContext inside a user gesture.
- * This lifts the browser autoplay restriction page-wide, including for any
- * AudioContext or HTMLAudioElement created later.
- */
-export const unlockAudio = async () => {
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  await ctx.resume();
-  await ctx.close();
+const _unlockCtx = async () => {
+  if (_ctx.state === 'suspended') await _ctx.resume();
+  if (_ctx.state === 'running') {
+    window.removeEventListener('keydown', _unlockCtx);
+    window.removeEventListener('pointerdown', _unlockCtx);
+  }
 };
+window.addEventListener('keydown', _unlockCtx);
+window.addEventListener('pointerdown', _unlockCtx);
 
 /**
- * @typedef {{ audio: HTMLAudioElement, interval: number }} SoundEntry
- * @typedef {Object.<string, SoundEntry>} SoundMap
+ * Resumes the shared AudioContext inside a confirmed user gesture.
+ * Call this once from a click/touch handler to lift the autoplay restriction.
  */
+export const unlockAudio = () => _ctx.resume();
+
 export class SoundPlayer {
-  muted = false;
   constructor() {
-    /** @type {SoundMap} */
-    this.sounds = {};
-    this.isPlaying = false;
+    /** @type {Map<string, AudioBuffer>} pre-decoded buffers */
+    this._buffers = new Map();
+    /** @type {Map<string, number>} minimum ms between plays, per sound */
+    this._intervals = new Map();
+    /** @type {Map<string, number>} earliest timestamp (ms) a sound may play again */
+    this._nextAllowed = new Map();
+    this.muted = false;
+  }
 
-    // Once AudioContext.resume() is called inside a user gesture, the browser
-    // lifts the autoplay restriction for the whole page — including HTMLAudioElement
-    // calls made later from requestAnimationFrame callbacks.
+  /**
+   * Fetch, decode, and cache an audio file as an AudioBuffer.
+   * Call this eagerly (at startup) so there is no decode delay on first play.
+   * @param {string} name - key used in play()
+   * @param {string} url  - full URL/path to the audio file
+   * @param {number} [interval=0] - minimum ms between repeated plays of this sound
+   */
+  async loadSound(name, url, interval = 0) {
+    try {
+      const res = await fetch(url);
+      const arrayBuffer = await res.arrayBuffer();
+      const audioBuffer = await _ctx.decodeAudioData(arrayBuffer);
+      this._buffers.set(name, audioBuffer);
+      this._intervals.set(name, interval);
+    } catch (e) {
+      console.error(`SoundPlayer: failed to load "${name}":`, e);
+    }
+  }
 
-    this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  /**
+   * Play a pre-loaded sound by name.
+   * Each sound has its own independent throttle — playing one never blocks another.
+   * @param {string} name
+   */
+  play(name) {
+    if (this.muted) return;
+    if (_ctx.state !== 'running') return;
 
-    const unlock = async () => {
-      if (this._audioCtx.state === 'suspended') {
-        await this._audioCtx.resume();
-      }
+    const buffer = this._buffers.get(name);
+    if (!buffer) return;
 
-      // Only stop listening once the context is actually running
-      if (this._audioCtx.state === 'running') {
-        window.removeEventListener('keydown', unlock);
-        window.removeEventListener('pointerdown', unlock);
-      }
-    };
-    window.addEventListener('keydown', unlock);
-    window.addEventListener('pointerdown', unlock);
+    const interval = this._intervals.get(name) ?? 0;
+    if (interval > 0) {
+      const now = Date.now();
+      if (now < (this._nextAllowed.get(name) ?? 0)) return;
+      // Reserve the slot before starting playback to prevent double-fires
+      this._nextAllowed.set(name, now + interval);
+    }
+
+    const source = _ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(_ctx.destination);
+    source.start(0);
   }
 
   toggleMute() {
     this.muted = !this.muted;
-  }
-
-  /**
-   * @param {string} name - name of the sound to load, must be the same name as the file, no extension.
-   */
-  loadSound(name, interval = 0) {
-    const audio = new Audio(`${SOUNDS_PATH}/${name}.mp3`);
-    audio.load();
-
-    this.sounds[name] = { audio, interval };
-  }
-  /**
-   * @param {string} sound - name of the sound to play, must be the same name as the file, no extension.
-   * all sounds should be .mp3 files located in the `SOUNDS_PATH` directory
-   * @example
-   * 'bump' for 'bump.mp3'
-   */
-  play(sound) {
-    if (this.muted) return;
-    if (this.isPlaying) return;
-    if (this.sounds[sound]) {
-      this.sounds[sound].audio.currentTime = 0; // Rewind to start
-      this._play(this.sounds[sound].audio, this.sounds[sound].interval);
-      return;
-    }
-    this.loadSound(sound);
-    this._play(this.sounds[sound].audio, this.sounds[sound].interval);
-    return;
-  }
-
-  /**
-   * @param {HTMLAudioElement} sound
-   * @param {number} interval
-   */
-  _play(sound, interval = 0) {
-    if (this._audioCtx.state === 'suspended') {
-      console.error(`Audio context is still suspended. Cannot play sound.`);
-
-      if (interval > 0) {
-        this.isPlaying = true; // Prevent further play attempts until context is resumed
-        this._isPlayingLoop(interval);
-        return;
-      }
-    } // Don't attempt to play if context is still suspended
-
-    this.isPlaying = true;
-    sound.play().catch((error) => {
-      console.error(`Failed to play sound "${sound.src}":`, error);
-    });
-    sound.onended = () => {
-      this._isPlayingLoop(interval);
-    };
-  }
-
-  _isPlayingLoop(interval) {
-    return interval > 0
-      ? setTimeout(() => {
-          this.isPlaying = false;
-        }, interval)
-      : (this.isPlaying = false);
   }
 }

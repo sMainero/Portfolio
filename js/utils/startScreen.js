@@ -1,19 +1,20 @@
 export const closeStartScreen = (startScreenElement) => {
-  if (!startScreenElement) {
-    return;
-  }
+  if (!startScreenElement) return;
 
-  // Double rAF: gives the browser two frames to finish painting the current
-  // state before starting the animation, preventing the first-frame chop on
-  // Chrome and ensuring a clean start in all browsers.
-  startScreenElement.classList.add('start-screen-closing');
-  startScreenElement.addEventListener(
-    'animationend',
-    () => {
-      startScreenElement.remove();
-    },
-    {
-      once: true,
-    },
-  );
+  const iris = startScreenElement.querySelector('.start-screen-iris');
+
+  // Double rAF ensures the browser has painted before the transition fires,
+  // preventing first-frame skips on Chrome, Safari, and Firefox mobile.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      startScreenElement.classList.add('start-screen-closing');
+
+      const target = iris ?? startScreenElement;
+      target.addEventListener(
+        'transitionend',
+        () => startScreenElement.remove(),
+        { once: true },
+      );
+    });
+  });
 };
