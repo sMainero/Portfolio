@@ -2,7 +2,7 @@ import { unlockAudio } from './classes/sounds/soundPlayer.js';
 import { setupMenuButton } from './utils/Menubutton.js';
 import { preloadGames, startGames } from './utils/gameBootstrap.js';
 import { loadingManager } from './utils/loadingManager.js';
-import { closeStartScreen } from './utils/startScreen.js';
+import { beginCloseStartScreen } from './utils/startScreen.js';
 
 let _startScreenElement = null;
 let _mainCanvasElement = null;
@@ -46,18 +46,26 @@ const requestPermissions = async () => {
     } catch (error) {}
   }
 
+  // Start the iris animation immediately — runs in parallel with game startup
+  // so the user sees instant visual feedback on click.
+  const removeStartScreen = beginCloseStartScreen(_startScreenElement);
+
   // Await the pre-loaded modules. If assets finished loading before the user
   // clicked start, these resolve instantly; otherwise they wait for the remainder.
   if (!_preloadedGames) {
     _preloadedGames = preloadGames();
   }
 
-  await startGames(_preloadedGames, {
-    mainCanvas: _mainCanvasElement,
-    renderCanvas: _renderCanvasElement,
-  });
-
-  closeStartScreen(_startScreenElement);
+  // Wait for both the transition to finish AND the games to be ready, then
+  // remove the element. Whichever takes longer, the screen is gone after both.
+  const [remove] = await Promise.all([
+    removeStartScreen,
+    startGames(_preloadedGames, {
+      mainCanvas: _mainCanvasElement,
+      renderCanvas: _renderCanvasElement,
+    }),
+  ]);
+  remove();
 };
 
 window.requestPermissions = requestPermissions;
