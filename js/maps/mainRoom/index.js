@@ -59,7 +59,7 @@ export class MainRoomMap extends TileMap {
             { x: TRAINER_SPRITE_SIZE * 0, y: TRAINER_SPRITE_SIZE * 1 },
           ],
           action: 'dialog',
-          dialog: 'This is my computer... it is the best computer in town...',
+          dialog: `It's a MapBoox N3 Ultra...\n Looks decent.`,
         }),
         new EventTrigger({
           name: 'experiencesRoomSign',
@@ -68,6 +68,32 @@ export class MainRoomMap extends TileMap {
           ],
           action: 'dialog',
           dialog: '"Trophy Room"',
+        }),
+        new EventTrigger({
+          name: 'experiencesRoomSign',
+          positions: [
+            { x: TRAINER_SPRITE_SIZE * 3, y: TRAINER_SPRITE_SIZE * 3 },
+            { x: TRAINER_SPRITE_SIZE * 3, y: TRAINER_SPRITE_SIZE * 4 },
+          ],
+          action: 'dialog',
+          dialog: `It's the best Video Game console, the Sistendo Nwitch!\nI always wanted one of those!`,
+        }),
+        new EventTrigger({
+          name: 'experiencesRoomSign',
+          positions: [
+            { x: TRAINER_SPRITE_SIZE * 0, y: TRAINER_SPRITE_SIZE * 4 },
+            { x: TRAINER_SPRITE_SIZE * 0, y: TRAINER_SPRITE_SIZE * 5 },
+          ],
+          action: 'dialog',
+          dialog: `I'm not tired right now.\nAlso I probably shouldn't touch his bed.`,
+        }),
+        new EventTrigger({
+          name: 'experiencesRoomSign',
+          positions: [
+            { x: TRAINER_SPRITE_SIZE * 6, y: TRAINER_SPRITE_SIZE * 0 },
+          ],
+          action: 'dialog',
+          dialog: `It's bright outside.`,
         }),
       ],
       [
