@@ -17,7 +17,7 @@ export const LOGOS_TILESET_SOLID_TILE_IDS = new Set([
 export const loadLogosTileset = async () => {
   await sharedLoader.loadImage(
     LOGOS_TILESET_NAME,
-    `${ASSETS_BASE}logos-tileset-complete.png`,
+    `${ASSETS_BASE}tilesets/logosTileset.png`,
   );
 
   const image = sharedLoader.get(LOGOS_TILESET_NAME);

@@ -12,15 +12,15 @@ import {
 import {
   LOGOS_TILESET_NAME,
   LOGOS_TILESET_SOLID_TILE_IDS,
-  RBY_TILESET_NAME,
-  RBY_TILESET_SOLID_TILE_IDS,
+  MAIN_TILESET_NAME,
+  MAIN_TILESET_SOLID_TILE_IDS,
   loadLogosTileset,
-  loadRbyTileset,
+  loadMainTileset,
 } from '../../tilesets/index.js';
 import { MAP_EXPERIENCES_ROOM } from './constants.js';
 
-const [rbyTileset, logosTileset] = await Promise.all([
-  loadRbyTileset(),
+const [mainTileset, logosTileset] = await Promise.all([
+  loadMainTileset(),
   loadLogosTileset(),
 ]);
 
@@ -32,16 +32,16 @@ export class ExperiencesRoomMap extends TileMap {
     super(
       MAP_EXPERIENCES_ROOM,
       {
-        [RBY_TILESET_NAME]: RBY_TILESET_SOLID_TILE_IDS,
+        [MAIN_TILESET_NAME]: MAIN_TILESET_SOLID_TILE_IDS,
         [LOGOS_TILESET_NAME]: LOGOS_TILESET_SOLID_TILE_IDS,
       },
       SCALED_TILE_SIZE,
       TILE_SCALING_AMOUNT,
       {
-        [RBY_TILESET_NAME]: rbyTileset,
+        [MAIN_TILESET_NAME]: mainTileset,
         [LOGOS_TILESET_NAME]: logosTileset,
       },
-      RBY_TILESET_NAME,
+      MAIN_TILESET_NAME,
       new Portal([
         {
           targetMap: 'mainRoom',

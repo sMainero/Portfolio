@@ -1,15 +1,10 @@
 export {
-  RBY_TILESET_NAME,
-  RBY_TILESET_SOLID_TILE_IDS,
-  rbyTileBuilder,
-  loadRbyTileset,
-} from './rbyTileset.js';
-export {
-  COMPLETE_TILESET_NAME,
-  COMPLETE_TILESET_SOLID_TILE_IDS,
-  completeTileBuilder,
-  loadCompleteTileset,
-} from './completeTileset.js';
+  MAIN_TILESET_NAME,
+  MAIN_TILESET_SOLID_TILE_IDS,
+  mainTileBuilder,
+  loadMainTileset,
+} from './mainTileset.js';
+
 export {
   LOGOS_TILESET_NAME,
   LOGOS_TILESET_SOLID_TILE_IDS,

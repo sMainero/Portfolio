@@ -11,19 +11,12 @@ import {
 } from '../../constants/tileset.js';
 import { MAP_MAIN_ROOM } from './constants.js';
 import {
-  COMPLETE_TILESET_NAME,
-  COMPLETE_TILESET_SOLID_TILE_IDS,
-  RBY_TILESET_NAME,
-  RBY_TILESET_SOLID_TILE_IDS,
-  loadCompleteTileset,
-  loadRbyTileset,
+  MAIN_TILESET_NAME,
+  MAIN_TILESET_SOLID_TILE_IDS,
+  loadMainTileset,
 } from '../../tilesets/index.js';
 
-const [rbyTileset, completeTileset] = await Promise.all([
-  loadRbyTileset(),
-  loadCompleteTileset(),
-]);
-
+const mainTileset = await loadMainTileset();
 /**
  * @extends {TileMap}
  */
@@ -32,16 +25,14 @@ export class MainRoomMap extends TileMap {
     super(
       MAP_MAIN_ROOM,
       {
-        [RBY_TILESET_NAME]: RBY_TILESET_SOLID_TILE_IDS,
-        [COMPLETE_TILESET_NAME]: COMPLETE_TILESET_SOLID_TILE_IDS,
+        [MAIN_TILESET_NAME]: MAIN_TILESET_SOLID_TILE_IDS,
       },
       SCALED_TILE_SIZE,
       TILE_SCALING_AMOUNT,
       {
-        [RBY_TILESET_NAME]: rbyTileset,
-        [COMPLETE_TILESET_NAME]: completeTileset,
+        [MAIN_TILESET_NAME]: mainTileset,
       },
-      RBY_TILESET_NAME,
+      MAIN_TILESET_NAME,
       new Portal([
         // {
         //   targetMap: 'town',
