@@ -3,11 +3,46 @@ const ALLOWED_KEYS = [
   'ArrowDown',
   'ArrowLeft',
   'ArrowRight',
-  'Enter',
+  'w',
+  'a',
+  's',
+  'd',
+  'W',
+  'A',
+  'S',
+  'D',
   'p',
+  'P',
+  'Enter',
   'Start',
   'Escape',
+  ' ',
+  'Delete',
+  'Backspace',
 ];
+
+const KEY_MAPS = {
+  ArrowUp: 'ArrowUp',
+  ArrowDown: 'ArrowDown',
+  ArrowLeft: 'ArrowLeft',
+  ArrowRight: 'ArrowRight',
+  w: 'ArrowUp',
+  a: 'ArrowLeft',
+  s: 'ArrowDown',
+  d: 'ArrowRight',
+  W: 'ArrowUp',
+  A: 'ArrowLeft',
+  S: 'ArrowDown',
+  D: 'ArrowRight',
+  p: 'p',
+  P: 'P',
+  Enter: 'Enter',
+  ' ': 'Enter',
+  Start: 'Start',
+  Escape: 'Escape',
+  Delete: 'Escape',
+  Backspace: 'Escape',
+};
 
 /**
  * Singleton instance — initialised once by Game, then importable anywhere.
@@ -22,13 +57,13 @@ export class InputHandler {
     window.addEventListener('keydown', (e) => {
       if (ALLOWED_KEYS.includes(e.key) && !e.repeat) {
         e.preventDefault(); // stop arrow keys from scrolling the page
-        this._addKey(e.key);
+        this._addKey(KEY_MAPS[e.key]);
       }
     });
 
     window.addEventListener('keyup', (e) => {
       if (ALLOWED_KEYS.includes(e.key)) {
-        this._removeKey(e.key);
+        this._removeKey(KEY_MAPS[e.key]);
       }
     });
   }
