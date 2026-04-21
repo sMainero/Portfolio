@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { camera } from './camera/camera.js';
+import { scene } from './scene.js';
 
 /**
  * Base class for 3D scene objects.
@@ -81,6 +82,17 @@ export class SceneObject {
   }
 
   hit(e) {}
+
+  /** Remove this object's mesh from the scene and dispose GPU resources. */
+  remove() {
+    if (this.mesh) {
+      scene.remove(this.mesh);
+      this.material?.map?.dispose();
+      this.material?.dispose();
+      this.mesh = null;
+      this.material = null;
+    }
+  }
 
   onFrame(deltaSeconds) {
     if (this._anchorEnabled) this._updateScreenAnchor();

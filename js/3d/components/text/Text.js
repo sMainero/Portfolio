@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { SceneObject } from '../SceneObject.js';
 
 /**
- * @typedef {{text: string, size?: number, color?: number, borderColor?: number,variateMovement?: boolean, movementVariationX?: number, movementVariationY?: number, mediaQuery?: string, anchor?: import('../SceneObject.js').AnchorOptions, position?: {x: number, y: number, z: number}}} TextOptions
+ * @typedef {{text: string, size?: number, color?: number, borderColor?: number,variateMovement?: boolean, movementVariationX?: number, movementVariationY?: number, movementDirectionX?: number, movementDirectionY?: number, mediaQuery?: string, anchor?: import('../SceneObject.js').AnchorOptions, position?: {x: number, y: number, z: number}}} TextOptions
  */
 export class Text extends SceneObject {
   text = '';
@@ -15,6 +15,8 @@ export class Text extends SceneObject {
   mesh = null;
   movementVariationX = Math.random() * 1000; // for subtle desynchronized bobbing
   movementVariationY = Math.random() * 1000; // for subtle desynchronized bobbing
+  movementDirectionX = 1;
+  movementDirectionY = 1;
   variateMovement = false;
   _startPosition = this.position.clone();
   /**
@@ -31,6 +33,8 @@ export class Text extends SceneObject {
     variateMovement,
     movementVariationX,
     movementVariationY,
+    movementDirectionX,
+    movementDirectionY,
   }) {
     super({ anchor, mediaQuery });
     this.text = text;
@@ -41,6 +45,8 @@ export class Text extends SceneObject {
     this.variateMovement = variateMovement ?? this.variateMovement;
     this.movementVariationX = movementVariationX ?? this.movementVariationX;
     this.movementVariationY = movementVariationY ?? this.movementVariationY;
+    this.movementDirectionX = movementDirectionX ?? this.movementDirectionX;
+    this.movementDirectionY = movementDirectionY ?? this.movementDirectionY;
 
     this.size = size ?? this.size;
     this.color = color ?? this.color;
@@ -110,12 +116,12 @@ export class Text extends SceneObject {
   }
   onFrame() {
     if (this.variateMovement) {
-      this.position.x =
-        this._startPosition.x +
+      const offset =
         Math.sin((Date.now() + this.movementVariationX) / 300) * 0.02;
+      this.position.x =
+        this._startPosition.x + offset * this.movementDirectionX;
       this.position.y =
-        this._startPosition.y +
-        Math.sin((Date.now() + this.movementVariationY) / 300) * 0.02;
+        this._startPosition.y + offset * this.movementDirectionY;
       if (this.mesh) this.mesh.position.copy(this.position);
     }
 

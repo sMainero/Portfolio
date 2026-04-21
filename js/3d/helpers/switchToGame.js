@@ -6,6 +6,7 @@ import { DEFAULT_CAMERA_ANIMATION_DURATION } from '../../constants/three.js';
 export const switchToGame = () => {
   gameCameraAnimation();
   cameraButtonState.cameraMode = 'game';
+  window.dispatchEvent(new CustomEvent('tutorial:cameraSwitch'));
   // Enter game mode after the camera animation finishes — skips all 3D world
   // work (particles, motion, raycasting) but keeps the canvas texture live.
   // setTimeout(() => {

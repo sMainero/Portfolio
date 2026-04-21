@@ -41,8 +41,14 @@ export class GameBoy {
   /** @type {THREE.Mesh | null} A action button */
   aButton = null;
 
+  /** @type {THREE.Mesh | null} A button label text mesh */
+  aButtonText = null;
+
   /** @type {THREE.Mesh | null} B action button */
   bButton = null;
+
+  /** @type {THREE.Mesh | null} B button label text mesh */
+  bButtonText = null;
 
   /** @type {THREE.Mesh | null} Select button */
   selectButton = null;
@@ -291,10 +297,16 @@ export class GameBoy {
       case 'DPadButton':
         this.dpad = child;
         break;
+      case 'AButtonText':
+        this.aButtonText = child;
+        break;
       case 'AButton':
         this.aButton = child;
         this._aButtonRestY = child.position.y;
         this._aButtonTargetY = child.position.y;
+        break;
+      case 'BButtonText':
+        this.bButtonText = child;
         break;
       case 'BButton':
         this.bButton = child;
@@ -322,11 +334,11 @@ export class GameBoy {
   _meshNameToKey(meshName = '') {
     const name = meshName.toLowerCase();
 
-    if (name === 'abutton') {
+    if (name === 'abutton' || name === 'abuttontext') {
       return CONTROL_KEYS.A;
     }
 
-    if (name === 'bbutton') {
+    if (name === 'bbutton' || name === 'bbuttontext') {
       return CONTROL_KEYS.B;
     }
 

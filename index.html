@@ -181,6 +181,24 @@
         tabindex="0"
       ></canvas>
     </div>
+
+    <div
+      id="toast"
+      class="toast pkbd toast--hidden"
+      role="status"
+      aria-live="polite"
+    >
+      <p id="toastText" class="toast__text"></p>
+      <button
+        id="toastClose"
+        class="toast__close"
+        type="button"
+        aria-label="Dismiss tutorial hint"
+      >
+        ✕
+      </button>
+    </div>
+
     <!-- <div class="game-instructions-container">
       <p class="pkbd sm game-instructions">
         Click on the game screen to interact and enable sound

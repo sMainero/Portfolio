@@ -310,6 +310,79 @@ body {
   color: var(--border-background-color);
 }
 
+/* === Toast === */
+.toast {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  z-index: 500;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  width: min(90vw, 34rem);
+  max-width: 90vw;
+  text-align: center;
+  pointer-events: auto;
+  touch-action: auto;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.toast--bottom {
+  top: auto;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
+}
+
+.toast--top {
+  bottom: auto;
+  top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+}
+
+.toast--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toast--bottom.toast--hidden {
+  transform: translateX(-50%) translateY(0.5rem);
+}
+
+.toast--top.toast--hidden {
+  transform: translateX(-50%) translateY(-0.5rem);
+}
+
+.toast__text {
+  margin: 0;
+}
+
+.toast__close {
+  position: absolute;
+  top: 0.35em;
+  right: 0.35em;
+  background: none;
+  border: none;
+  color: #000;
+  font-family: inherit;
+  font-size: 0.85em;
+  cursor: pointer;
+  padding: 0.2em;
+  line-height: 1;
+  pointer-events: auto;
+  touch-action: auto;
+}
+
+@media (max-width: 600px) {
+  .toast {
+    width: min(90vw, 30rem);
+    max-width: 90vw;
+    font-size: 1rem;
+    padding: 0.8rem 2.4rem 0.8rem 1rem;
+  }
+}
+
 /* === Portfolio Modal === */
 .portfolio-modal-backdrop {
   position: fixed;

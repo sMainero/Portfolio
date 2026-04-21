@@ -5,10 +5,9 @@ import { Button } from './components/Button.js';
 import { cameraButtonState } from './helpers/cameraButtonState.js';
 import { switchToGame } from './helpers/switchToGame.js';
 import { switchToReset } from './helpers/switchToReset.js';
-import { createInstructionsText } from './components/text/instructionsText.js';
-import { createInstructionsArrow } from './components/text/instructionsArrow.js';
 import { createInstructionsControls } from './components/text/instructionsControls.js';
 import { createModelCredits } from './components/text/gameboyCredits.js';
+import { ControlsTutorial } from './components/tutorial/ControlsTutorial.js';
 
 export const start3DGame = ({ renderCanvas, game }) => {
   window.switchCameraMode = () => {
@@ -23,7 +22,7 @@ const renderScreen = ({ renderCanvas, game }) => {
 
   world.add(new GameBoy(world, game));
   // world.add(createInstructionsText());
-  world.add(createInstructionsArrow());
+  world.add(new ControlsTutorial());
   world.add(createInstructionsControls());
   world.add(createModelCredits());
   cameraButtonState.button = new Button(world, {
