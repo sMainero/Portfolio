@@ -7,11 +7,11 @@ const CONTROLS_STEPS = [
   {
     toastText: 'Click the camera button to switch to game view!',
     toastPosition: 'bottom',
-    arrowOrientation: 'upRight',
+    arrowOrientation: 'downLeft',
     arrowOptions: {
       size: 0.4,
       color: 0xffffff,
-      position: { x: 0.4, y: 1.2, z: 0.1 },
+      position: { x: 0.7, y: 1.5, z: 0.1 },
       variateMovement: true,
       movementVariationX: arrowVariation,
       movementVariationY: arrowVariation,
@@ -33,8 +33,7 @@ const CONTROLS_STEPS = [
     completionKeys: ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'],
   },
   {
-    toastText:
-      'Press the A button (or Enter) near a character or object to interact!',
+    toastText: 'Press the A button (or Enter) near a character or object to interact!',
     toastPosition: 'bottom',
     arrowOrientation: 'upRight',
     arrowOptions: {

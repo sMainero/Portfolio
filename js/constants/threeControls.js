@@ -5,7 +5,8 @@ export const CONTROL_KEYS = {
   A: 'Enter',
   B: 'Escape',
   Start: 'p',
-  Select: 'Escape ', // we'll treat Select as another way to close the menu
+  Select: 'Escape ', // we'll treat Select as another way to close the menu,
+  Power: 'Power', // special key for the
 };
 
 export const BUTTON_PRESS_DEPTH = 0.02;

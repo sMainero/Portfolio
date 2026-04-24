@@ -8,27 +8,11 @@ import { scene } from './scene.js';
  * Provides a shared _updateScreenAnchor() that pins this.mesh to a
  * screen-space corner every frame, driven by the live camera state.
  *
- * Subclasses opt in by passing `anchor: { enabled: true, ... }` to super().
- * When anchor is disabled the mesh stays wherever it was positioned at build time.
  *
- * @typedef {{
- *   enabled?: boolean,
- *   distance?: number,
- *   marginX?: number,
- *   marginY?: number,
- * }} AnchorOptions
  */
 export class SceneObject {
-  _anchorEnabled = false;
-  _anchorDistance = 2;
-  _anchorMarginX = 0;
-  _anchorMarginY = 0;
   _mediaQuery = null;
-
-  _cameraRight = new THREE.Vector3();
-  _cameraUp = new THREE.Vector3();
-  _cameraForward = new THREE.Vector3();
-  _anchorPoint = new THREE.Vector3();
+  _camera = camera;
 
   /**
    * @param {{ anchor?: AnchorOptions, mediaQuery?: string }} options
@@ -51,34 +35,6 @@ export class SceneObject {
     };
     apply(mql.matches);
     mql.addEventListener('change', (e) => apply(e.matches));
-  }
-
-  _updateScreenAnchor() {
-    if (!this.mesh) return;
-    const distance = this._anchorDistance;
-    const halfHeight =
-      Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * distance;
-    const halfWidth = halfHeight * camera.aspect;
-
-    const offsetRight = halfWidth - this._anchorMarginX;
-    const offsetUp = halfHeight - this._anchorMarginY;
-
-    camera.getWorldDirection(this._cameraForward);
-    this._cameraForward.normalize();
-
-    this._cameraRight
-      .set(1, 0, 0)
-      .applyQuaternion(camera.quaternion)
-      .normalize();
-    this._cameraUp.set(0, 1, 0).applyQuaternion(camera.quaternion).normalize();
-
-    this._anchorPoint
-      .copy(camera.position)
-      .addScaledVector(this._cameraForward, distance)
-      .addScaledVector(this._cameraRight, offsetRight)
-      .addScaledVector(this._cameraUp, offsetUp);
-
-    this.mesh.position.copy(this._anchorPoint);
   }
 
   hit(e) {}

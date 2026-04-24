@@ -8,6 +8,7 @@ const SOUND_DEFS = [
   { name: 'confirm', url: `${SOUNDS_PATH}/Confirm.wav`, interval: 0 },
   { name: 'cancel', url: `${SOUNDS_PATH}/Cancel.wav`, interval: 0 },
   { name: 'menuMove', url: `${SOUNDS_PATH}/MenuMove.wav`, interval: 0 },
+  { name: 'on', url: `${SOUNDS_PATH}/On.wav`, interval: 100 },
 ];
 
 export class SfxPlayer extends SoundPlayer {

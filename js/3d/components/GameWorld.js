@@ -110,9 +110,7 @@ export class World {
   // -----------------------------------------------------------------------
 
   _dispatchGameKey(type, key) {
-    window.dispatchEvent(
-      new KeyboardEvent(type, { key, bubbles: true, cancelable: true }),
-    );
+    window.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true, cancelable: true }));
   }
 
   _hoveredEntity = null;
@@ -142,8 +140,7 @@ export class World {
     if (!entity) return;
     entity?.hit?.(event, intersection);
 
-    const handledByEntity =
-      entity.onPointerDown?.(event, intersection) ?? false;
+    const handledByEntity = entity.onPointerDown?.(event, intersection) ?? false;
     if (handledByEntity) {
       event.preventDefault();
       return;
@@ -223,10 +220,7 @@ export class World {
 
     const animationState = getCameraAnimationState();
 
-    if (
-      !this._hasMotionBaseline &&
-      (Math.abs(motion.x) > 0.3 || Math.abs(motion.y) > 0.3)
-    ) {
+    if (!this._hasMotionBaseline && (Math.abs(motion.x) > 0.3 || Math.abs(motion.y) > 0.3)) {
       this._motionBaseline.x = motion.x;
       this._motionBaseline.y = motion.y;
       this._hasMotionBaseline = true;
@@ -250,8 +244,7 @@ export class World {
 
     const targetX = cameraBasePosition.x + offsetX;
     const targetY = cameraBasePosition.y + offsetY;
-    const alpha =
-      1 - Math.exp(-(animationState.isAnimating ? 30 : 5) * deltaSeconds);
+    const alpha = 1 - Math.exp(-(animationState.isAnimating ? 30 : 5) * deltaSeconds);
     camera.position.x += (targetX - camera.position.x) * alpha;
     camera.position.y += (targetY - camera.position.y) * alpha;
     camera.position.z += (cameraBasePosition.z - camera.position.z) * alpha;
@@ -281,11 +274,7 @@ export class World {
   _onResize(renderCanvas) {
     camera.aspect = renderCanvas.clientWidth / renderCanvas.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(
-      renderCanvas.clientWidth,
-      renderCanvas.clientHeight,
-      false,
-    );
+    renderer.setSize(renderCanvas.clientWidth, renderCanvas.clientHeight, false);
     composer.setSize(renderCanvas.clientWidth, renderCanvas.clientHeight);
   }
 }

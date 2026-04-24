@@ -13,6 +13,7 @@ import {
 import { inputHandler } from '../../../handlers/inputHandler.js';
 import { gltfModelLoader } from '../../helpers/gltfLoader.js';
 import { screenLight } from './light/screenPointLight.js';
+import { sfxPlayer } from '../../../classes/sounds/sfxPlayer.js';
 const CASE_COLOR = 0x8953a9;
 
 /** Duration (ms) to keep the A-button press animation active after the key is consumed (~167ms). */
@@ -55,9 +56,17 @@ export class GameBoy {
 
   /** @type {THREE.Mesh | null} Start button */
   startButton = null;
+  /** @type {THREE.Mesh | null} Start button */
+  powerLed = null;
+
+  /** @type {THREE.Mesh | null} Invisible collider that enlarges power LED press area */
+  _powerLedHitArea = null;
 
   /** @type {THREE.Mesh | null} Screen plane carrying the 2D canvas texture */
   screenPlane = null;
+
+  /** Whether the screen is currently on. */
+  _screenOn = true;
 
   _dotMatrixMaterial = dotMatrixMaterialBuilder(canvasTexture);
 
@@ -120,6 +129,11 @@ export class GameBoy {
    * @param {string} key
    */
   onPress(_mesh, key) {
+    if (key === CONTROL_KEYS.Power) {
+      this._togglePower();
+      return;
+    }
+
     const isDpad = [
       CONTROL_KEYS.ArrowUp,
       CONTROL_KEYS.ArrowDown,
@@ -131,6 +145,26 @@ export class GameBoy {
     this._aButtonTargetY = this._aButtonRestY + BUTTON_PRESS_DEPTH;
     if (key === CONTROL_KEYS.B) this._touchingB = true;
     this._bButtonTargetY = this._bButtonRestY + BUTTON_PRESS_DEPTH;
+  }
+
+  _togglePower() {
+    this._screenOn = !this._screenOn;
+    sfxPlayer.play('on');
+
+    if (this.powerLed) {
+      this.powerLed.material.transparent = true;
+      this.powerLed.material.opacity = this._screenOn ? 1 : 0.1;
+      this.powerLed.material.needsUpdate = true;
+    }
+
+    if (this.screenPlane) {
+      this.screenPlane.visible = this._screenOn;
+    }
+
+    if (!this._screenLightBaseIntensity) {
+      this._screenLightBaseIntensity = screenLight.intensity;
+    }
+    screenLight.intensity = this._screenOn ? this._screenLightBaseIntensity : 0;
   }
 
   /**
@@ -254,6 +288,7 @@ export class GameBoy {
   /** Overlay a clean PlaneGeometry carrying the dot-matrix canvas texture. */
   _setupScreen(child) {
     const screenParent = child.parent;
+    const powerLed = child.children?.find((c) => c.name === 'Power_Led');
 
     // Point light so the screen casts green light onto surrounding geometry
     screenLight.position.copy(child.position);
@@ -319,11 +354,48 @@ export class GameBoy {
       case 'StartButton':
         this.startButton = child;
         break;
+      case 'Power_Led':
+        this.powerLed = child;
+        this._createPowerLedHitArea(child);
+
+        break;
       default:
         return;
     }
 
     this._world.registerMesh(child, this);
+  }
+
+  _createPowerLedHitArea(powerLedMesh) {
+    if (this._powerLedHitArea) return;
+
+    if (!powerLedMesh.geometry?.boundingBox) {
+      powerLedMesh.geometry?.computeBoundingBox();
+    }
+
+    const bounds = powerLedMesh.geometry?.boundingBox;
+    const size = new THREE.Vector3();
+    bounds?.getSize(size);
+
+    // Keep visuals unchanged: this collider is invisible but raycastable.
+    const hitScale = 4;
+    const hitGeo = new THREE.BoxGeometry(
+      Math.max(size.x * hitScale, 0.03),
+      Math.max(size.y * hitScale, 0.03),
+      Math.max(size.z * hitScale, 0.03),
+    );
+    const hitMat = new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+    });
+
+    const hitArea = new THREE.Mesh(hitGeo, hitMat);
+    hitArea.name = 'Power_Led_HitArea';
+    powerLedMesh.add(hitArea);
+
+    this._powerLedHitArea = hitArea;
+    this._world.registerMesh(hitArea, this);
   }
 
   // -----------------------------------------------------------------------
@@ -334,6 +406,9 @@ export class GameBoy {
   _meshNameToKey(meshName = '') {
     const name = meshName.toLowerCase();
 
+    if (name.startsWith('power_led')) {
+      return CONTROL_KEYS.Power;
+    }
     if (name === 'abutton' || name === 'abuttontext') {
       return CONTROL_KEYS.A;
     }

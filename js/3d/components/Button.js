@@ -1,9 +1,13 @@
 import { ASSETS_BASE } from '../../constants/assets.js';
 import { World } from './GameWorld.js';
-import { scene } from './scene.js';
+import { scene, SceneContext } from './scene.js';
 import * as THREE from 'three';
 import { loadingManager } from '../../utils/loadingManager.js';
 import { SceneObject } from './SceneObject.js';
+
+const spinsAmount = 16;
+
+const spinDuration = 800; // ms for the entire spin
 
 /** @type {THREE.Texture | null} */
 let _cachedTexture = null;
@@ -54,7 +58,7 @@ export const preloadButtonAssets = (iconPath) => {
 
 export class Button extends SceneObject {
   /**
-   * @type {scene}
+   * @type {SceneContext['scene']}
    */
   _scene = null;
   /**
@@ -84,9 +88,13 @@ export class Button extends SceneObject {
   _baseY = 1.1;
   _elapsedTime = 0;
   _isHovered = false;
+
+  _isSpinning = false;
   _spinAccum = 0;
-  _spinStep = Math.PI / 8; // rotation per tick
-  _spinInterval = 0.05; // seconds between ticks
+  _currentSpin = 0;
+  _spinInterval = spinDuration / spinsAmount / 1000; // seconds between ticks
+  _spinTimeAccum = 0;
+
   _labelType = 'text';
   _labelText = 'START';
   _iconPath = `${ASSETS_BASE}/icons/camera.svg`;
@@ -124,7 +132,7 @@ export class Button extends SceneObject {
     });
     this.geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2, 1, 1, 1);
     this.mesh = new THREE.Mesh(this.geometry, this.material);
-    this.mesh.position.set(0.7, 1.5, 0.1);
+    this.mesh.position.set(0.4, 1.2, 0.1);
     this.mesh.renderOrder = 1000;
     // this._updateScreenAnchor();
     this._baseY = this.mesh.position.y;
@@ -272,25 +280,48 @@ export class Button extends SceneObject {
     document.body.style.cursor = '';
   }
 
+  async _spin(deltaMs) {
+    this._spinTimeAccum += deltaMs;
+
+    return new Promise((resolve, reject) => {
+      if (this._spinTimeAccum >= this._spinInterval) {
+        this.mesh.rotation.x += Math.PI / 8;
+        this._spinTimeAccum = 0;
+        this._currentSpin++;
+        if (this._currentSpin >= spinsAmount) {
+          this._currentSpin = 0;
+          resolve();
+        }
+        // this.mesh.rotation.y += Math.PI / 8;
+      }
+    })
+      .then(() => {
+        this._isSpinning = false;
+        console.log('🚀 ~ Button.js:300 ~ Button ~ _spin ~ this._isSpinning:', this._isSpinning);
+      })
+      .catch((err) => {
+        console.log('🚀 ~ Button.js:303 ~ Button ~ _spin ~ r:', r);
+      })
+      .finally(() => {});
+  }
+
   hit(e) {
     window.switchCameraMode?.();
-    let spins = 16;
-    for (let i = 0; i < 16; i++) {
-      setTimeout(() => {
-        this.mesh.rotation.x += Math.PI / 8;
-        // this.mesh.rotation.y += Math.PI / 8;
-      }, i * 50);
-    }
+    this._isSpinning = true;
   }
   resolveKey() {
     return;
   }
   onFrame(deltaSeconds) {
     this._elapsedTime += deltaSeconds;
-    super.onFrame(deltaSeconds);
 
-    const targetY =
-      this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
+    if (!this._isSpinning) {
+      this.mesh.lookAt(this._camera.position);
+    } else {
+      this._spin(deltaSeconds);
+    }
+    super.onFrame(deltaSeconds);
+    const targetY = this._baseY + Math.sin(this._elapsedTime * 4) * 0.03;
     const smoothing = Math.min(deltaSeconds * 10, 1);
 
     if (this._isHovered) {

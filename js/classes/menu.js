@@ -57,8 +57,7 @@ export class Menu {
     if (game.input.keys.includes('ArrowUp')) {
       game.input.consumeKey('ArrowUp');
       sfx.play('menuMove');
-      this._cursor =
-        (this._cursor - 1 + this._items.length) % this._items.length;
+      this._cursor = (this._cursor - 1 + this._items.length) % this._items.length;
     }
 
     if (game.input.keys.includes('ArrowDown')) {
@@ -113,64 +112,14 @@ export class Menu {
     context.drawImage(border, 8, 8, 8, 8, innerX, innerY, innerW, innerH);
     // edges
     context.drawImage(border, 8, 0, 8, 8, innerX, BOX_Y, innerW, TILE); // top
-    context.drawImage(
-      border,
-      8,
-      16,
-      8,
-      8,
-      innerX,
-      BOX_Y + BOX_H - TILE,
-      innerW,
-      TILE,
-    ); // bottom
+    context.drawImage(border, 8, 16, 8, 8, innerX, BOX_Y + BOX_H - TILE, innerW, TILE); // bottom
     context.drawImage(border, 0, 8, 8, 8, BOX_X, innerY, TILE, innerH); // left
-    context.drawImage(
-      border,
-      16,
-      8,
-      8,
-      8,
-      BOX_X + BOX_W - TILE,
-      innerY,
-      TILE,
-      innerH,
-    ); // right
+    context.drawImage(border, 16, 8, 8, 8, BOX_X + BOX_W - TILE, innerY, TILE, innerH); // right
     // corners
     context.drawImage(border, 0, 0, 8, 8, BOX_X, BOX_Y, TILE, TILE); // TL
-    context.drawImage(
-      border,
-      16,
-      0,
-      8,
-      8,
-      BOX_X + BOX_W - TILE,
-      BOX_Y,
-      TILE,
-      TILE,
-    ); // TR
-    context.drawImage(
-      border,
-      0,
-      16,
-      8,
-      8,
-      BOX_X,
-      BOX_Y + BOX_H - TILE,
-      TILE,
-      TILE,
-    ); // BL
-    context.drawImage(
-      border,
-      16,
-      16,
-      8,
-      8,
-      BOX_X + BOX_W - TILE,
-      BOX_Y + BOX_H - TILE,
-      TILE,
-      TILE,
-    ); // BR
+    context.drawImage(border, 16, 0, 8, 8, BOX_X + BOX_W - TILE, BOX_Y, TILE, TILE); // TR
+    context.drawImage(border, 0, 16, 8, 8, BOX_X, BOX_Y + BOX_H - TILE, TILE, TILE); // BL
+    context.drawImage(border, 16, 16, 8, 8, BOX_X + BOX_W - TILE, BOX_Y + BOX_H - TILE, TILE, TILE); // BR
 
     // Items
     for (let i = 0; i < this._items.length; i++) {
