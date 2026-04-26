@@ -21,8 +21,8 @@ export const MAP_EXPERIENCES_ROOM = [
   [logosTileBuilder(20), logosTileBuilder(21), 1, 1, 1, 1, 1, 1, logosTileBuilder(22), logosTileBuilder(23)],
   [logosTileBuilder(26), logosTileBuilder(27), 1, 1, 1, 1, 1, 1, logosTileBuilder(28), logosTileBuilder(29)],
   [logosTileBuilder(32), logosTileBuilder(33), 1, 1, 1, 1, 1, 1, logosTileBuilder(34), logosTileBuilder(35)],
-  [1, 1, 1, 4, 4, 4, 4, 1, 1, 1],
-  [1, 1, 1, 20, 20, 20, 20, 1, 1, 1],
+  [1, 1, 1, 5, 5, 5, 5, 1, 1, 1],
+  [1, 1, 1, 21, 21, 21, 21, 1, 1, 1],
   [-2, -2, -2, -2, -1, -1, -2, -2, -2, -2],
   [-2, -2, -2, -2, -1, -1, -2, -2, -2, -2],
 ];
