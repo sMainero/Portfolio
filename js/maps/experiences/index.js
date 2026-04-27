@@ -12,12 +12,9 @@ import {
   LOGOS_TILESET_SOLID_TILE_IDS,
   MAIN_TILESET_NAME,
   MAIN_TILESET_SOLID_TILE_IDS,
-  loadLogosTileset,
-  loadMainTileset,
 } from '../../tilesets/index.js';
+import { getMainTileset, getLogosTileset } from '../../utils/assetPreloader.js';
 import { MAP_EXPERIENCES_ROOM } from './constants.js';
-
-const [mainTileset, logosTileset] = await Promise.all([loadMainTileset(), loadLogosTileset()]);
 
 /**
  * @extends {TileMap}
@@ -33,8 +30,8 @@ export class ExperiencesRoomMap extends TileMap {
       SCALED_TILE_SIZE,
       TILE_SCALING_AMOUNT,
       {
-        [MAIN_TILESET_NAME]: mainTileset,
-        [LOGOS_TILESET_NAME]: logosTileset,
+        [MAIN_TILESET_NAME]: getMainTileset(),
+        [LOGOS_TILESET_NAME]: getLogosTileset(),
       },
       MAIN_TILESET_NAME,
       new Portal([

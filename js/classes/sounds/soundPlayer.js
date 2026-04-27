@@ -1,34 +1,21 @@
-// Shared AudioContext — one per page, never closed.
-// Must be created before the first user gesture so the instance exists;
-// it starts suspended and is resumed inside the gesture handler below.
-const _ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-const _unlockCtx = async () => {
-  if (_ctx.state === 'suspended') await _ctx.resume();
-  if (_ctx.state === 'running') {
-    window.removeEventListener('keydown', _unlockCtx);
-    window.removeEventListener('pointerdown', _unlockCtx);
-  }
-};
-window.addEventListener('keydown', _unlockCtx);
-window.addEventListener('pointerdown', _unlockCtx);
+import { sharedSoundLoader } from '../../utils/soundLoader.js';
 
 /**
  * Resumes the shared AudioContext inside a confirmed user gesture.
  * Call this once from a click/touch handler to lift the autoplay restriction.
  */
-export const unlockAudio = () => _ctx.resume();
+export const unlockAudio = () => sharedSoundLoader.unlock();
 
 /**
  * Generic audio buffer player with per-sound throttling.
+ * Buffers are stored and retrieved via sharedSoundLoader — this class only
+ * manages play state (muting, per-sound intervals).
  */
 export class SoundPlayer {
   /**
-   * Initialize internal audio buffer caches.
+   * Initialize throttle state maps.
    */
   constructor() {
-    /** @type {Map<string, AudioBuffer>} pre-decoded buffers */
-    this._buffers = new Map();
     /** @type {Map<string, number>} minimum ms between plays, per sound */
     this._intervals = new Map();
     /** @type {Map<string, number>} earliest timestamp (ms) a sound may play again */
@@ -37,22 +24,15 @@ export class SoundPlayer {
   }
 
   /**
-   * Fetch, decode, and cache an audio file as an AudioBuffer.
-   * Call this eagerly (at startup) so there is no decode delay on first play.
+   * Load an audio file via sharedSoundLoader and register its play interval.
    * @param {string} name - key used in play()
    * @param {string} url  - full URL/path to the audio file
    * @param {number} [interval=0] - minimum ms between repeated plays of this sound
+   * @returns {Promise<void>}
    */
   async loadSound(name, url, interval = 0) {
-    try {
-      const res = await fetch(url);
-      const arrayBuffer = await res.arrayBuffer();
-      const audioBuffer = await _ctx.decodeAudioData(arrayBuffer);
-      this._buffers.set(name, audioBuffer);
-      this._intervals.set(name, interval);
-    } catch (e) {
-      console.error(`SoundPlayer: failed to load "${name}":`, e);
-    }
+    await sharedSoundLoader.load(name, url);
+    this._intervals.set(name, interval);
   }
 
   /**
@@ -62,9 +42,11 @@ export class SoundPlayer {
    */
   play(name) {
     if (this.muted) return;
-    if (_ctx.state !== 'running') return;
 
-    const buffer = this._buffers.get(name);
+    const ctx = sharedSoundLoader.audioContext;
+    if (ctx.state !== 'running') return;
+
+    const buffer = sharedSoundLoader.get(name);
     if (!buffer) return;
 
     const interval = this._intervals.get(name) ?? 0;
@@ -75,9 +57,9 @@ export class SoundPlayer {
       this._nextAllowed.set(name, now + interval);
     }
 
-    const source = _ctx.createBufferSource();
+    const source = ctx.createBufferSource();
     source.buffer = buffer;
-    source.connect(_ctx.destination);
+    source.connect(ctx.destination);
     source.start(0);
   }
 

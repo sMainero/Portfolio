@@ -16,13 +16,27 @@ const SOUND_DEFS = [
  */
 export class SfxPlayer extends SoundPlayer {
   /**
+   * Resolves when all SFX audio buffers have been decoded and cached.
+   * @type {Promise<void>}
+   */
+  _loadingPromise;
+
+  /**
    * Preload all configured SFX assets.
    */
   constructor() {
     super();
-    for (const { name, url, interval } of SOUND_DEFS) {
-      this.loadSound(name, url, interval);
-    }
+    this._loadingPromise = Promise.all(
+      SOUND_DEFS.map(({ name, url, interval }) => this.loadSound(name, url, interval)),
+    ).then(() => {});
+  }
+
+  /**
+   * Promise that resolves once every SFX buffer is ready to play.
+   * @returns {Promise<void>}
+   */
+  get whenReady() {
+    return this._loadingPromise;
   }
 
   /**

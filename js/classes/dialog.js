@@ -10,14 +10,11 @@ import {
   DIALOG_BORDER_SCALE,
 } from '../constants/dialog.js';
 import { CANVAS_WIDTH } from '../constants/game.js';
-import { ASSETS_BASE } from '../constants/assets.js';
 import { sharedLoader } from '../utils/assetLoader.js';
 
 const MAX_CHARS_PER_LINE = Math.floor(
   (CANVAS_WIDTH - DIALOG_MARGIN * 2 - DIALOG_PADDING * 2) / DIALOG_CHARACTER_WIDTH,
 );
-
-await sharedLoader.loadImage('dialogBorder', `${ASSETS_BASE}borders/BorderTileSet.png`);
 
 /**
  * Typewriter-style dialog renderer with paging and selection hand-off.

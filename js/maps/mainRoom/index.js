@@ -7,13 +7,9 @@ import { EventTrigger } from '../../classes/eventTrigger.js';
 import { TRAINER_SPRITE_SIZE } from '../../constants/player.js';
 import { SCALED_TILE_SIZE, TILE_SCALING_AMOUNT } from '../../constants/tileset.js';
 import { MAP_MAIN_ROOM } from './constants.js';
-import {
-  MAIN_TILESET_NAME,
-  MAIN_TILESET_SOLID_TILE_IDS,
-  loadMainTileset,
-} from '../../tilesets/index.js';
+import { MAIN_TILESET_NAME, MAIN_TILESET_SOLID_TILE_IDS } from '../../tilesets/index.js';
+import { getMainTileset } from '../../utils/assetPreloader.js';
 
-const mainTileset = await loadMainTileset();
 /**
  * @extends {TileMap}
  */
@@ -27,7 +23,7 @@ export class MainRoomMap extends TileMap {
       SCALED_TILE_SIZE,
       TILE_SCALING_AMOUNT,
       {
-        [MAIN_TILESET_NAME]: mainTileset,
+        [MAIN_TILESET_NAME]: getMainTileset(),
       },
       MAIN_TILESET_NAME,
       new Portal([

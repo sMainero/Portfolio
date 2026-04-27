@@ -2,8 +2,9 @@ import { ASSETS_BASE } from '../../constants/assets.js';
 import { World } from './GameWorld.js';
 import { scene, SceneContext } from './scene.js';
 import * as THREE from 'three';
-import { loadingManager } from '../../utils/loadingManager.js';
 import { SceneObject } from './SceneObject.js';
+import { sharedLoader } from '../../utils/assetLoader.js';
+import { sharedTextureLoader } from '../../utils/threeTextureLoader.js';
 import { TRAINER_MOVE_STEP } from '../../constants/movement.js';
 import { TileMap } from '../../classes/tileMap.js';
 import { maps } from '../../maps/index.js';
@@ -30,58 +31,6 @@ import { Game } from '../../classes/game.js';
 const spinsAmount = 16;
 
 const spinDuration = 800; // ms for the entire spin
-
-/** @type {THREE.Texture | null} */
-let _cachedTexture = null;
-/** @type {Record<string, HTMLImageElement>} */
-const _cachedIcons = {};
-
-/**
- * Preload shared button texture and optional icon image.
- * @param {string} [iconPath]
- * @returns {Promise<void[]>}
- */
-export const preloadButtonAssets = (iconPath) => {
-  const promises = [];
-
-  const onTextureProgress = loadingManager.register('buttonTexture');
-  const texturePromise = new Promise((resolve) => {
-    new THREE.TextureLoader().load(
-      `${ASSETS_BASE}/button.png`,
-      (texture) => {
-        texture.magFilter = THREE.LinearFilter;
-        texture.colorSpace = THREE.SRGBColorSpace;
-        _cachedTexture = texture;
-        onTextureProgress?.(100);
-        resolve();
-      },
-      (xhr) => {
-        if (xhr.total > 0) onTextureProgress?.((xhr.loaded / xhr.total) * 100);
-      },
-    );
-  });
-  promises.push(texturePromise);
-
-  if (iconPath) {
-    const onIconProgress = loadingManager.register('buttonIcon');
-    const iconPromise = new Promise((resolve) => {
-      const image = new Image();
-      image.onload = () => {
-        _cachedIcons[iconPath] = image;
-        onIconProgress?.(100);
-        resolve();
-      };
-      image.onerror = () => {
-        onIconProgress?.(100);
-        resolve();
-      };
-      image.src = iconPath;
-    });
-    promises.push(iconPromise);
-  }
-
-  return Promise.all(promises);
-};
 
 /**
  * 3D interactive button with optional icon/text face and floating label.
@@ -173,7 +122,7 @@ export class Button extends SceneObject {
     }
 
     const map =
-      _cachedTexture ??
+      sharedTextureLoader.get('buttonTexture') ??
       (() => {
         const t = new THREE.TextureLoader().load(`${ASSETS_BASE}/button.png`);
         t.magFilter = THREE.LinearFilter;
@@ -246,7 +195,7 @@ export class Button extends SceneObject {
    * @returns {Promise<THREE.Mesh | null>}
    */
   async _buildIconLabel(iconPath) {
-    const image = _cachedIcons[iconPath] ?? (await this._loadImage(iconPath));
+    const image = sharedLoader.get(iconPath);
     if (!image) return null;
 
     const size = 128;
@@ -379,20 +328,6 @@ export class Button extends SceneObject {
       this.mesh.position.y + this._floatingTextOffsetY,
       this.mesh.position.z,
     );
-  }
-
-  /**
-   * Load an image asset from URL.
-   * @param {string} src
-   * @returns {Promise<HTMLImageElement | null>}
-   */
-  _loadImage(src) {
-    return new Promise((resolve) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = () => resolve(null);
-      image.src = src;
-    });
   }
 
   /**

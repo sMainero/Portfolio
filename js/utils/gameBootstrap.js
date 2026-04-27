@@ -6,14 +6,10 @@ const _preloadFont = () => {
   document.fonts.load('64px Pokemon').then(() => onProgress?.(100));
 };
 
-const _preloadButtonAssets = () =>
-  import('../3d/components/Button.js').then(({ preloadButtonAssets }) =>
-    preloadButtonAssets('assets/icons/camera.svg'),
-  );
-
 export const preloadGames = () => {
   _preloadFont();
-  _preloadButtonAssets();
+  // Start the GLTF model download immediately for maximum parallelism.
+  // assetPreloader.js will await the same promise (GltfModelLoader deduplicates).
   gltfModelLoader.instance.loadModel('gameboy');
 
   return {

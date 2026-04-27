@@ -4,18 +4,10 @@
 import { Portal } from '../../classes/portal.js';
 import { TileMap } from '../../classes/tileMap.js';
 import { TRAINER_SPRITE_SIZE } from '../../constants/player.js';
-import {
-  SCALED_TILE_SIZE,
-  TILE_SCALING_AMOUNT,
-} from '../../constants/tileset.js';
+import { SCALED_TILE_SIZE, TILE_SCALING_AMOUNT } from '../../constants/tileset.js';
 import { MAP_MAIN_TOWN } from './constants.js';
-import {
-  MAIN_TILESET_NAME,
-  MAIN_TILESET_SOLID_TILE_IDS,
-  loadMainTileset,
-} from '../../tilesets/index.js';
-
-const mainTileset = await loadMainTileset();
+import { MAIN_TILESET_NAME, MAIN_TILESET_SOLID_TILE_IDS } from '../../tilesets/index.js';
+import { getMainTileset } from '../../utils/assetPreloader.js';
 
 /**
  * @extends {TileMap}
@@ -30,7 +22,7 @@ export class TownMap extends TileMap {
       SCALED_TILE_SIZE,
       TILE_SCALING_AMOUNT,
       {
-        [MAIN_TILESET_NAME]: mainTileset,
+        [MAIN_TILESET_NAME]: getMainTileset(),
       },
       MAIN_TILESET_NAME,
       new Portal([
