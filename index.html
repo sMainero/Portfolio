@@ -68,27 +68,6 @@
     <link rel="stylesheet" href="css/canvas.css" />
     <link rel="stylesheet" href="css/keys.css" />
 
-    <!-- <script>
-      // Catch any module-load or runtime errors and show them visually on device
-      // (remove this block once the issue is identified)
-      const _showErr = (msg) => {
-        const el = document.createElement('pre');
-        el.style.cssText =
-          'position:fixed;top:0;left:0;right:0;z-index:99999;background:#fff;color:red;font-size:11px;padding:8px;overflow:auto;max-height:60vh;white-space:pre-wrap;word-break:break-all';
-        el.textContent = msg;
-        document.body
-          ? document.body.appendChild(el)
-          : document.addEventListener('DOMContentLoaded', () =>
-              document.body.appendChild(el),
-            );
-      };
-      window.addEventListener('error', (e) =>
-        _showErr(e.message + '\n' + e.filename + ':' + e.lineno),
-      );
-      window.addEventListener('unhandledrejection', (e) =>
-        _showErr(String(e.reason)),
-      );
-    </script> -->
     <script src="js/index.js" type="module"></script>
     <script type="application/ld+json">
       {
@@ -140,15 +119,6 @@
           <img src="assets/icons/camera.svg" alt="" class="camera-switch-icon" />
         </button>
         <button
-          id="fullscreenToggleButton"
-          type="button"
-          class="fullscreen-toggle-button pkbd pkbd-clickable"
-          aria-label="Toggle fullscreen"
-          onclick="toggleFullscreen()"
-        >
-          []
-        </button>
-        <button
           id="speakerToggleButton"
           type="button"
           class="speaker-toggle-button pkbd pkbd-clickable"
@@ -156,6 +126,15 @@
           onclick="onSpeakerClick()"
         >
           <img src="assets/icons/speaker.png" alt="Sound" class="speaker-toggle-icon" />
+        </button>
+        <button
+          id="fullscreenToggleButton"
+          type="button"
+          class="fullscreen-toggle-button pkbd pkbd-clickable"
+          aria-label="Toggle fullscreen"
+          onclick="toggleFullscreen()"
+        >
+          []
         </button>
         <button
           id="menuToggleButton"
@@ -178,12 +157,6 @@
         ✕
       </button>
     </div>
-
-    <!-- <div class="game-instructions-container">
-      <p class="pkbd sm game-instructions">
-        Click on the game screen to interact and enable sound
-      </p>
-    </div> -->
 
     <div
       id="portfolioModal"

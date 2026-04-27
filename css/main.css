@@ -10,7 +10,8 @@
   --modal-z-index: 15;
   --modal-backdrop-z-index: 300;
   --toast-z-index: 400;
-  --button-bar-z-index: 350;
+  --prioritized-buttons-z-index: 250;
+  --button-z-index: 50;
   --start-screen-z-index: 100;
 }
 html {
@@ -273,7 +274,6 @@ body {
   flex-direction: row;
   align-items: center;
   gap: 0.5rem;
-  z-index: var(--button-bar-z-index);
 }
 
 .camera-switch-button.is-active,
@@ -302,17 +302,22 @@ body {
 }
 .camera-switch-button {
   padding-left: 0.5rem;
+  z-index: var(--button-z-index);
+}
+.speaker-toggle-button {
+  z-index: 50;
+  font-size: 1rem;
+  padding-bottom: 0.25rem;
+  z-index: var(--button-z-index);
 }
 .menu-toggle-button {
   padding-bottom: 0.5rem;
+  z-index: var(--prioritized-buttons-z-index);
 }
 .fullscreen-toggle-button {
   font-size: 0.65rem;
   padding-bottom: 0.25rem;
-}
-.speaker-toggle-button {
-  font-size: 1rem;
-  padding-bottom: 0.25rem;
+  z-index: var(--prioritized-buttons-z-index);
 }
 .camera-switch-icon,
 .speaker-toggle-icon {
