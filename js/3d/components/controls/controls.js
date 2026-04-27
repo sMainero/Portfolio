@@ -2,18 +2,20 @@ import { camera, cameraTarget } from '../camera/camera.js';
 import { renderer } from '../renderer/renderer.js';
 import { createOrbitControls } from './orbitControls.js';
 
+/** @typedef {ReturnType<typeof createOrbitControls>} OrbitControlsInstance */
+
 /**
  * Wrapper around orbit controls used by the 3D world.
  */
 export class ControlsContext {
-  /** @type {import('three/examples/jsm/controls/OrbitControls.js').OrbitControls | null} */
+  /** @type {OrbitControlsInstance | null} */
   _controls = null;
 
   /**
    * @param {{
-   *   cameraRef: import('three').PerspectiveCamera,
-   *   domElement: HTMLElement,
-   *   target: import('three').Vector3
+   *   cameraRef: typeof camera,
+   *   domElement: typeof renderer.domElement,
+   *   target: typeof cameraTarget
    * }} options
    */
   constructor({ cameraRef, domElement, target }) {
@@ -25,9 +27,10 @@ export class ControlsContext {
   }
 
   /**
-   * @returns {import('three/examples/jsm/controls/OrbitControls.js').OrbitControls | null}
+   * @returns {OrbitControlsInstance}
    */
   get controls() {
+    if (!this._controls) throw new Error('Controls are not initialized');
     return this._controls;
   }
 }

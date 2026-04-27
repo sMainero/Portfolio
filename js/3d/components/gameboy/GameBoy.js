@@ -103,7 +103,7 @@ export class GameBoy extends SceneObject {
     this._world = world;
     this._game = game;
     /**
-     * @type {import('three/examples/jsm/loaders/GLTFLoader').GLTF}
+     * @type {Awaited<ReturnType<import('../../helpers/gltfLoader.js').GltfModelLoader['loadModel']>>}
      */
     const gltf = gltfModelLoader.instance.loadedModels['gameboy'];
     this._setupModel(gltf.scene);
@@ -247,7 +247,7 @@ export class GameBoy extends SceneObject {
   // -----------------------------------------------------------------------
 
   /**
-   * @param {import('three/examples/jsm/loaders/GLTFLoader').GLTF['scene']} gltfScene
+   * @param {Awaited<ReturnType<import('../../helpers/gltfLoader.js').GltfModelLoader['loadModel']>>['scene']} gltfScene
    */
   _setupModel(gltfScene) {
     const model = gltfScene;

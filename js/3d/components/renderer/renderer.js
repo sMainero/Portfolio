@@ -14,6 +14,7 @@ export class RendererContext {
    * @type {WebGLRenderer}
    */
   _renderer = null;
+  /** @type {EffectComposer | null} */
   _composer = null;
 
   /**
@@ -44,11 +45,15 @@ export class RendererContext {
     this._composer.addPass(new OutputPass());
   }
 
+  /** @returns {WebGLRenderer} */
   get renderer() {
+    if (!this._renderer) throw new Error('Renderer is not initialized');
     return this._renderer;
   }
 
+  /** @returns {EffectComposer} */
   get composer() {
+    if (!this._composer) throw new Error('Composer is not initialized');
     return this._composer;
   }
 }

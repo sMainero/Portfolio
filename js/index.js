@@ -4,9 +4,13 @@ import { preloadGames, startGames } from './utils/gameBootstrap.js';
 import { loadingManager } from './utils/loadingManager.js';
 import { beginCloseStartScreen } from './utils/startScreen.js';
 
+/** @type {HTMLElement | null} */
 let _startScreenElement = null;
+/** @type {HTMLCanvasElement | null} */
 let _mainCanvasElement = null;
+/** @type {HTMLCanvasElement | null} */
 let _renderCanvasElement = null;
+/** @type {Promise<unknown> | null} */
 let _preloadedGames = null;
 
 window.onload = () => {

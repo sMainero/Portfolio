@@ -69,7 +69,7 @@ export const particles = new Points(_geometry, _material);
  * Keep particles anchored in world-space and only render a trail based on
  * camera movement history so ghosting appears when the camera moves.
  *
- * @param {import('three').Vector3} cameraPosition
+ * @param {typeof import('../../camera/camera.js').camera.position} cameraPosition
  */
 export function updateParticles(cameraPosition) {
   if (!_isCameraHistoryInitialized) {
@@ -95,8 +95,7 @@ export function updateParticles(cameraPosition) {
   // Unroll history into the output buffer oldest-first:
   // step 0 is the oldest (dimmest), step N-1 is the newest (brightest).
   for (let t = 0; t < TRAIL_LENGTH; t++) {
-    const histIdx =
-      (_histHead - (TRAIL_LENGTH - 1 - t) + TRAIL_LENGTH) % TRAIL_LENGTH;
+    const histIdx = (_histHead - (TRAIL_LENGTH - 1 - t) + TRAIL_LENGTH) % TRAIL_LENGTH;
     const cameraIdx = histIdx * 3;
     const offsetX = (currentX - _cameraHistory[cameraIdx]) * TRAIL_STRENGTH;
     const offsetY = (currentY - _cameraHistory[cameraIdx + 1]) * TRAIL_STRENGTH;

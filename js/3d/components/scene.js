@@ -10,7 +10,9 @@ export class SceneContext {
     this._scene = new Scene();
   }
 
+  /** @returns {Scene} */
   get scene() {
+    if (!this._scene) throw new Error('Scene is not initialized');
     return this._scene;
   }
 }

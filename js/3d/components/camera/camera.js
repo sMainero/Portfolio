@@ -6,8 +6,11 @@ import { INITIAL_CAMERA_POSITION } from '../../../constants/three.js';
  * Camera rig that centralizes camera state and camera animation lifecycle.
  */
 export class CameraRig {
+  /** @type {PerspectiveCamera | null} */
   _camera = null;
+  /** @type {Vector3 | null} */
   _basePosition = null;
+  /** @type {Vector3 | null} */
   _target = null;
   _animationState = { isAnimating: false, activeAnimationId: 0 };
 
@@ -31,15 +34,21 @@ export class CameraRig {
     this._target = new Vector3(0, 0, 0);
   }
 
+  /** @returns {PerspectiveCamera} */
   get camera() {
+    if (!this._camera) throw new Error('CameraRig camera is not initialized');
     return this._camera;
   }
 
+  /** @returns {Vector3} */
   get basePosition() {
+    if (!this._basePosition) throw new Error('CameraRig basePosition is not initialized');
     return this._basePosition;
   }
 
+  /** @returns {Vector3} */
   get target() {
+    if (!this._target) throw new Error('CameraRig target is not initialized');
     return this._target;
   }
 

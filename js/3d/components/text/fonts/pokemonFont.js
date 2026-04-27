@@ -2,11 +2,15 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { loadingManager } from '../../../../utils/loadingManager.js';
 
 const _loader = new FontLoader();
+/** @type {import('three/examples/jsm/loaders/FontLoader').Font | null} */
 let _cachedFont = null;
+/** @type {Promise<import('three/examples/jsm/loaders/FontLoader').Font> | null} */
 let _loadPromise = null;
 
+/** @returns {import('three/examples/jsm/loaders/FontLoader').Font | null} */
 export const getPokemonFont = () => _cachedFont;
 
+/** @returns {Promise<import('three/examples/jsm/loaders/FontLoader').Font>} */
 export const loadPokemonFont = () => {
   if (_loadPromise) return _loadPromise;
 

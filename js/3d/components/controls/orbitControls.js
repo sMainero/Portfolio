@@ -1,5 +1,17 @@
+import { Camera, Vector3 } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+/**
+ * @typedef {Object} OrbitControlsOptions
+ * @property {Camera} camera
+ * @property {HTMLElement} domElement
+ * @property {Vector3} target
+ */
+
+/**
+ * @param {OrbitControlsOptions} options
+ * @returns {OrbitControls}
+ */
 export const createOrbitControls = ({ camera, domElement, target }) => {
   const controls = new OrbitControls(camera, domElement);
   controls.enablePan = false;

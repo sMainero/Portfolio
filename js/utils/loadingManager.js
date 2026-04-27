@@ -14,6 +14,7 @@ let _domBound = false;
 
 const dots = ['', '.', '..', '...'];
 let dotIndex = 0;
+/** @type {ReturnType<typeof setInterval> | null} */
 let dotsInverval = null;
 const startLoadingTextInterval = () => {
   if (!dotsInverval) {
@@ -59,10 +60,7 @@ export const loadingManager = {
    * @returns {(percentage: number) => void}
    */
   register(name) {
-    if (
-      !startScreenElement ||
-      (startScreenElement && !startScreenElement.isConnected)
-    ) {
+    if (!startScreenElement || (startScreenElement && !startScreenElement.isConnected)) {
       return;
     }
     loadingSources[name] = 0;
