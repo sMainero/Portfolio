@@ -1,6 +1,15 @@
 import { Game } from './classes/game.js';
 import { CANVAS_HEIGHT, CANVAS_SCALE, CANVAS_WIDTH } from './constants/game.js';
 import { MainRoomMap } from './maps/mainRoom/index.js';
+import { CHARACTER_SPRITES } from './classes/character.js';
+import { sharedLoader } from './utils/assetLoader.js';
+
+// Preload character sprites before any Character/Player/Npc is instantiated.
+// This was previously a top-level await in character.js, which caused TDZ
+// errors in Safari when async module graphs were evaluated out of order.
+await Promise.all(
+  Object.entries(CHARACTER_SPRITES).map(([key, src]) => sharedLoader.loadImage(key, src)),
+);
 
 export const startGameEngine = (canvas) => {
   const ctx = canvas.getContext('2d');

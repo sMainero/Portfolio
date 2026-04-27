@@ -32,10 +32,6 @@ export const CHARACTER_MOVEMENT_STEPS = {
   right: { dx: TRAINER_MOVE_STEP, dy: 0, direction: 'right' },
 };
 
-await Promise.all(
-  Object.entries(CHARACTER_SPRITES).map(([key, src]) => sharedLoader.loadImage(key, src)),
-);
-
 /**
  * Base character entity with grid movement and sprite animation.
  */
