@@ -8,6 +8,7 @@ import {
   DIALOG_PADDING,
 } from '../constants/dialog.js';
 import { sharedLoader } from '../utils/assetLoader.js';
+import { Toast } from '../3d/components/tutorial/Toast.js';
 
 const TILE = DIALOG_BORDER_TILE_SIZE * DIALOG_BORDER_SCALE;
 const BOX_W = 200; // same width as Menu for consistency
@@ -18,8 +19,9 @@ const MAX_LABEL_LENGTH = 6;
 
 /**
  * @typedef {{ type: 'useLink', url: string }} UseLinkAction
+ * @typedef {{ type: 'copyEmail', email: string }} CopyEmailAction
  * @typedef {{ type: 'usePortal', targetMap: string, targetX: number, targetY: number }} UsePortalAction
- * @typedef {UseLinkAction | UsePortalAction} SelectionAction
+ * @typedef {UseLinkAction | CopyEmailAction | UsePortalAction} SelectionAction
  * @typedef {{ label: string, action?: SelectionAction }} SelectionOption
  */
 
@@ -116,7 +118,36 @@ export class SelectionPrompt {
     if (!selected?.action) return;
 
     if (selected.action.type === 'useLink') {
-      window.open(selected.action.url, '_blank', 'noopener,noreferrer');
+      const { url } = selected.action;
+      window.open(url, '_blank', 'noopener,noreferrer');
+
+      // Fallback for browsers (e.g. mobile Safari) that silently block the
+      // window.open call. After 500 ms, if the page is still visible the tab
+      // switch / app open didn't happen — show a tappable toast so the user
+      // can retry from a fresh trusted click.
+      setTimeout(() => {
+        if (document.visibilityState !== 'visible') return;
+        Toast.getInstance().show({
+          text: 'Hmm\u2026 the link didn\u2019t open. Press here to try again.',
+          position: 'top',
+          autoHideMs: 5000,
+          onClick: () => window.open(url, '_blank', 'noopener,noreferrer'),
+        });
+      }, 500);
+
+      return;
+    }
+
+    if (selected.action.type === 'copyEmail') {
+      const { email } = selected.action;
+      // Show a tappable toast — the tap is a real trusted click, so clipboard
+      // access is always permitted regardless of how the prompt was confirmed.
+      Toast.getInstance().show({
+        text: 'Email ready. Press here to copy.',
+        position: 'top',
+        autoHideMs: 5000,
+        onClick: () => window.copyEmailToClipboard?.(email),
+      });
       return;
     }
 
@@ -127,6 +158,42 @@ export class SelectionPrompt {
         selected.action.targetY,
       );
     }
+  }
+
+  /**
+   * Test whether a canvas-space click lands on one of the option rows.
+   * If it does, move the cursor to that option and trigger _select().
+   * Returns true if the click was handled.
+   * @param {number} canvasX
+   * @param {number} canvasY
+   * @param {import('./game.js').Game} game
+   * @returns {boolean}
+   */
+  clickAt(canvasX, canvasY, game) {
+    if (!this.isOpen) return false;
+
+    const BOX_H = TILE * 2 + TEXT_PADDING * 2 + this._options.length * DIALOG_LINE_HEIGHT;
+    const dialogBoxH = DIALOG_PADDING * 2 + DIALOG_LINES_PER_PAGE * DIALOG_LINE_HEIGHT;
+    const dialogBoxY = game.height - dialogBoxH - DIALOG_MARGIN;
+    const BOX_X = game.width - BOX_W - DIALOG_MARGIN;
+    const BOX_Y = dialogBoxY - BOX_H - 4;
+
+    // Quick bounds check for the whole box.
+    if (canvasX < BOX_X || canvasX > BOX_X + BOX_W || canvasY < BOX_Y || canvasY > BOX_Y + BOX_H) {
+      return false;
+    }
+
+    const rowsTop = BOX_Y + TILE + TEXT_PADDING;
+    const relY = canvasY - rowsTop;
+    if (relY < 0) return false;
+
+    const index = Math.floor(relY / DIALOG_LINE_HEIGHT);
+    if (index < 0 || index >= this._options.length) return false;
+
+    this._cursor = index;
+    game.sfxPlayer.play('confirm');
+    this._select(game);
+    return true;
   }
 
   /**

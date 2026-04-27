@@ -141,10 +141,13 @@ export class Game {
     if (this.state.transition || this.menu.isOpen) return false;
 
     if (this.state.activeEvent) {
-      // Don't advance dialog while the selection prompt is waiting for input
-      if (!this.state.activeEvent.selectionPrompt?.isOpen) {
-        this.state.activeEvent.dialog.advance(this);
+      const prompt = this.state.activeEvent.selectionPrompt;
+      if (prompt?.isOpen) {
+        // Let the user tap directly on a rendered option to select it.
+        prompt.clickAt(canvasX, canvasY, this);
+        return true;
       }
+      this.state.activeEvent.dialog.advance(this);
       return true;
     }
 

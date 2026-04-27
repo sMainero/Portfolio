@@ -380,6 +380,12 @@ body {
   margin: 0;
 }
 
+.toast__text--action {
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .toast__close {
   position: absolute;
   top: 0.35em;

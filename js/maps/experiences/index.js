@@ -4,7 +4,7 @@
 import { EventTrigger } from '../../classes/eventTrigger.js';
 import { Portal } from '../../classes/portal.js';
 import { TileMap } from '../../classes/tileMap.js';
-import { LINK_CONTACT, LINK_GITHUB, LINK_LINKEDIN } from '../../constants/links.js';
+import { EMAIL_CONTACT, LINK_GITHUB, LINK_LINKEDIN } from '../../constants/links.js';
 import { TRAINER_SPRITE_SIZE } from '../../constants/player.js';
 import { SCALED_TILE_SIZE, TILE_SCALING_AMOUNT } from '../../constants/tileset.js';
 import {
@@ -67,7 +67,7 @@ export class ExperiencesRoomMap extends TileMap {
           action: 'selection',
           dialog: `Contact Sebastian's Email?:`,
           selectionOptions: [
-            { label: 'YES', action: { type: 'useLink', url: LINK_CONTACT } },
+            { label: 'YES', action: { type: 'copyEmail', email: EMAIL_CONTACT } },
             { label: 'NO' },
           ],
         }),
