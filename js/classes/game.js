@@ -56,6 +56,11 @@ export class Game {
 
     this.input = InputHandler.init();
     this.sfxPlayer = sfxPlayer;
+    window.toggleSoundMute = () => {
+      this.sfxPlayer.toggleMute();
+      return this.sfxPlayer.isMuted;
+    };
+    window.sfxPlayer = this.sfxPlayer;
     this.menu = new Menu([
       { label: 'CAMERA', action: () => window.switchCameraMode?.() },
       {
@@ -64,7 +69,9 @@ export class Game {
       },
       {
         label: 'MUTE',
-        action: () => (this.sfxPlayer.isMuted ? this.sfxPlayer.unmute() : this.sfxPlayer.mute()),
+        action: () => {
+          window.onSpeakerClick();
+        },
       },
       {
         label: 'FLSCRN',

@@ -276,15 +276,19 @@ body {
   z-index: var(--button-bar-z-index);
 }
 
-.camera-switch-button.is-hidden {
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
+.camera-switch-button.is-active,
+.speaker-toggle-button.is-active {
+  background-color: var(--border-color);
+}
+.camera-switch-button.is-active .camera-switch-icon,
+.speaker-toggle-button.is-active .speaker-toggle-icon {
+  filter: invert(1);
 }
 /* === Button Bar Buttons === */
 .camera-switch-button,
 .fullscreen-toggle-button,
-.menu-toggle-button {
+.menu-toggle-button,
+.speaker-toggle-button {
   height: 2rem;
   width: 2rem;
   font-size: 0.8em;
@@ -306,7 +310,12 @@ body {
   font-size: 0.65rem;
   padding-bottom: 0.25rem;
 }
-.camera-switch-icon {
+.speaker-toggle-button {
+  font-size: 1rem;
+  padding-bottom: 0.25rem;
+}
+.camera-switch-icon,
+.speaker-toggle-icon {
   display: block;
   width: 1em;
   height: 1em;

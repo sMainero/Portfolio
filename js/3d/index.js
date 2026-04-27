@@ -25,14 +25,15 @@ const renderScreen = ({ renderCanvas, game }) => {
   world.add(new ControlsTutorial());
   world.add(createInstructionsControls());
   world.add(createModelCredits());
-  cameraButtonState.button = new Button(world, game, {
-    labelType: 'icon',
-    iconPath: 'assets/icons/camera.svg',
-    floatingText: 'Game Camera',
-    position: { x: 0.4, y: 1.5, z: 0.1 },
-    onClick: () => window.switchCameraMode?.(),
-  });
-  world.add(cameraButtonState.button);
+  // cameraButtonState.button = new Button(world, game, {
+  //   labelType: 'icon',
+  //   iconPath: 'assets/icons/camera.svg',
+  //   floatingText: 'Game Camera',
+  //   position: { x: 0.4, y: 1.5, z: 0.1 },
+  //   onClick: () => window.switchCameraMode?.(),
+  // });
+  // world.add(cameraButtonState.button);
+
   world.add(
     new Button(world, game, {
       labelType: 'icon',

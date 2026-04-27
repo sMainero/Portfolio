@@ -133,7 +133,7 @@
         <button
           id="htmlCameraControls"
           type="button"
-          class="camera-switch-button is-hidden pkbd pkbd-clickable"
+          class="camera-switch-button pkbd pkbd-clickable"
           aria-label="Switch camera"
           onclick="switchCameraMode()"
         >
@@ -144,14 +144,25 @@
           type="button"
           class="fullscreen-toggle-button pkbd pkbd-clickable"
           aria-label="Toggle fullscreen"
+          onclick="toggleFullscreen()"
         >
           []
+        </button>
+        <button
+          id="speakerToggleButton"
+          type="button"
+          class="speaker-toggle-button pkbd pkbd-clickable"
+          aria-label="Toggle sound mute"
+          onclick="onSpeakerClick()"
+        >
+          <img src="assets/icons/speaker.png" alt="Sound" class="speaker-toggle-icon" />
         </button>
         <button
           id="menuToggleButton"
           type="button"
           class="menu-toggle-button pkbd pkbd-clickable"
           aria-label="Open portfolio"
+          onclick="openPortfolioModal()"
         >
           i
         </button>
