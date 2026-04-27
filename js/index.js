@@ -1,5 +1,5 @@
 import { unlockAudio } from './classes/sounds/soundPlayer.js';
-import { setupMenuButton } from './utils/menuButton.js';
+import { setupMenuButton } from './utils/MenuButton.js';
 import { setupMuteButton } from './utils/muteButton.js';
 import { setupFullscreenButton } from './utils/fullscreenButton.js';
 import { preloadGames, startGames } from './utils/gameBootstrap.js';
