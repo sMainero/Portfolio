@@ -226,52 +226,18 @@ export class Button extends SceneObject {
   /**
    * Build a text label sprite for the button face.
    * @param {string} labelText
-   * @returns {Promise<THREE.Sprite>}
+   * @returns {Promise<THREE.Sprite | null>}
    */
   async _buildTextLabel(labelText) {
     await document.fonts.load('bold 48px Pokemon');
-
-    const canvas = document.createElement('canvas');
-    const fontSize = 24;
-    const padding = 24;
-
-    // Measure text width with the loaded font
-    const tmpCtx = canvas.getContext('2d');
-    canvas.height = fontSize + padding * 2;
-    tmpCtx.font = `bold ${fontSize}px Pokemon`;
-    canvas.width = Math.ceil(tmpCtx.measureText(labelText).width) + padding * 2;
-
-    // Re-apply context state after canvas resize (resize clears state)
-    const ctx = canvas.getContext('2d');
-    ctx.font = `bold ${fontSize}px Pokemon`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = '#ffffff';
-    ctx.fillStyle = '#111111';
-    ctx.strokeText(labelText, canvas.width / 2, canvas.height / 2);
-    ctx.fillText(labelText, canvas.width / 2, canvas.height / 2);
-
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.needsUpdate = true;
-
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-      opacity: 1,
-      transparent: true,
-      depthTest: false,
-      depthWrite: false,
+    return this._createTextSprite({
+      text: labelText,
+      fontSize: 24,
+      padding: 24,
+      spriteHeight: 0.16,
+      zOffset: 0.21,
+      renderOrder: 1001,
     });
-
-    const label = new THREE.Sprite(material);
-    // Derive sprite width from canvas aspect ratio so nothing is ever cropped
-    const spriteHeight = 0.16;
-    const spriteWidth = spriteHeight * (canvas.width / canvas.height);
-    label.scale.set(spriteWidth, spriteHeight, 1);
-    label.position.set(0, 0, 0.21);
-    return label;
   }
 
   /**
@@ -344,25 +310,42 @@ export class Button extends SceneObject {
    */
   async _buildFloatingText(text) {
     await document.fonts.load('bold 36px Pokemon');
+    return this._createTextSprite({
+      text,
+      fontSize: 20,
+      padding: 16,
+      spriteHeight: 0.1,
+      zOffset: 0,
+      renderOrder: 1002,
+    });
+  }
 
+  /**
+   * Create a text sprite from a string with consistent styling.
+   * @param {{ text: string, fontSize: number, padding: number, spriteHeight: number, zOffset: number, renderOrder: number }} options
+   * @returns {THREE.Sprite | null}
+   */
+  _createTextSprite({ text, fontSize, padding, spriteHeight, zOffset, renderOrder }) {
     const canvas = document.createElement('canvas');
-    const fontSize = 20;
-    const padding = 16;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const actualFontSize = fontSize * dpr;
+    const actualPadding = padding * dpr;
+    const fillColor = '#ffffff';
 
     const tmpCtx = canvas.getContext('2d');
-    canvas.height = fontSize + padding * 2;
-    tmpCtx.font = `bold ${fontSize}px Pokemon`;
-    canvas.width = Math.ceil(tmpCtx.measureText(text).width) + padding * 2;
+    if (!tmpCtx) return null;
+
+    canvas.height = actualFontSize + actualPadding * 2;
+    tmpCtx.font = `bold ${actualFontSize}px Pokemon`;
+    canvas.width = Math.ceil(tmpCtx.measureText(text).width) + actualPadding * 2;
 
     const ctx = canvas.getContext('2d');
-    ctx.font = `bold ${fontSize}px Pokemon`;
+    if (!ctx) return null;
+    ctx.font = `bold ${actualFontSize}px Pokemon`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineJoin = 'round';
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = '#ffffff';
-    ctx.fillStyle = '#111111';
-    ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
+    ctx.fillStyle = fillColor;
     ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
     const texture = new THREE.CanvasTexture(canvas);
@@ -378,10 +361,10 @@ export class Button extends SceneObject {
     });
 
     const label = new THREE.Sprite(material);
-    const spriteHeight = 0.1;
     const spriteWidth = spriteHeight * (canvas.width / canvas.height);
     label.scale.set(spriteWidth, spriteHeight, 1);
-    label.renderOrder = 1002;
+    label.position.set(0, 0, zOffset);
+    label.renderOrder = renderOrder;
     return label;
   }
 
@@ -450,14 +433,11 @@ export class Button extends SceneObject {
         // this.mesh.rotation.y += Math.PI / 8;
       }
     })
-      .then(() => {
+      .then(() => {})
+      .catch((err) => {})
+      .finally(() => {
         this._isSpinning = false;
-        console.log('🚀 ~ Button.js:455 ~ Button ~ _spin ~ this._isSpinning:', this._isSpinning);
-      })
-      .catch((err) => {
-        console.log('🚀 ~ Button.js:458 ~ Button ~ _spin ~ r:', r);
-      })
-      .finally(() => {});
+      });
   }
 
   /**
