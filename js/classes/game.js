@@ -13,6 +13,9 @@ import { LINK_GITHUB, LINK_LINKEDIN, LINK_CONTACT } from '../constants/links.js'
 const TRANSITION_STEPS = [0.2, 0.6, 1]; // alpha at each step
 const FRAMES_PER_STEP = 4; // game frames to hold each step
 
+/**
+ * Core game runtime controller for world state, input, transitions, and rendering.
+ */
 export class Game {
   /**
    * @type {Object.<string, EventTrigger>}
@@ -95,6 +98,12 @@ export class Game {
     return Math.round(this.player.y - this.height / 2 + this.player.height / 2);
   }
 
+  /**
+   * Convert canvas-space coordinates to world-space coordinates.
+   * @param {number} canvasX
+   * @param {number} canvasY
+   * @returns {{ worldX: number, worldY: number }}
+   */
   _toWorldPosition(canvasX, canvasY) {
     return {
       worldX: this.cameraX + canvasX,
@@ -102,6 +111,12 @@ export class Game {
     };
   }
 
+  /**
+   * Snap world coordinates to the map tile grid.
+   * @param {number} worldX
+   * @param {number} worldY
+   * @returns {{ tileX: number, tileY: number }}
+   */
   _snapToGrid(worldX, worldY) {
     const step = this.player.width;
     return {
@@ -110,6 +125,11 @@ export class Game {
     };
   }
 
+  /**
+   * Activate an event-like target (NPC or EventTrigger).
+   * @param {import('./npc.js').Npc | EventTrigger} eventTrigger
+   * @returns {void}
+   */
   _activateEvent(eventTrigger) {
     this.player.enableMovement = false;
     eventTrigger.dialog.reset();
@@ -117,6 +137,12 @@ export class Game {
     this.state.activeEvent = eventTrigger;
   }
 
+  /**
+   * Handle a click on the 2D screen canvas.
+   * @param {number} canvasX
+   * @param {number} canvasY
+   * @returns {boolean}
+   */
   handleScreenClick(canvasX, canvasY) {
     if (this.state.transition || this.menu.isOpen) return false;
 
@@ -169,6 +195,10 @@ export class Game {
     };
   }
 
+  /**
+   * Progress the transition fade state machine by one frame.
+   * @returns {void}
+   */
   updateTransition() {
     const t = this.state.transition;
     if (!t) return;
@@ -221,6 +251,12 @@ export class Game {
     context.restore();
   }
 
+  /**
+   * Advance one simulation frame.
+   * @param {number} deltaTime
+   * @param {number} fps
+   * @returns {void}
+   */
   update(deltaTime, fps) {
     if (this.state.transition) {
       this.updateTransition();
@@ -259,6 +295,11 @@ export class Game {
     this._checkInteraction();
   }
 
+  /**
+   * Load and attach a map by its key.
+   * @param {keyof maps} mapKey
+   * @returns {void}
+   */
   loadMap(mapKey) {
     if (!maps[mapKey]) throw new Error(`Unknown map: "${mapKey}"`);
     this.map = new maps[mapKey]();
@@ -266,6 +307,10 @@ export class Game {
     this.state.update({ player: this.player, mapKey });
   }
 
+  /**
+   * Check and trigger facing interaction when Enter is pressed.
+   * @returns {void}
+   */
   _checkInteraction() {
     if (this.player.isMoving) return;
     if (!this.input.keys.includes('Enter')) return;
@@ -281,6 +326,7 @@ export class Game {
 
   /**
    * @param {CanvasRenderingContext2D} context
+   * @returns {void}
    */
   draw(context) {
     context.fillStyle = 'black';
@@ -294,6 +340,12 @@ export class Game {
       this.state.activeEvent.selectionPrompt?.draw(context, this);
     }
   }
+  /**
+   * Main requestAnimationFrame loop.
+   * @param {CanvasRenderingContext2D} context
+   * @param {number} [timeStamp=0]
+   * @returns {void}
+   */
   animate(context, timeStamp = 0) {
     const deltaTime = timeStamp - this.lastTime;
 

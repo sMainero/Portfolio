@@ -55,6 +55,10 @@ export class Text extends SceneObject {
     this.draw();
   }
 
+  /**
+   * Build sprite material and mesh for this text object.
+   * @returns {this}
+   */
   build() {
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const fontSize = 64 * dpr;
@@ -69,9 +73,7 @@ export class Text extends SceneObject {
     const tmpCanvas = document.createElement('canvas');
     const tmpCtx = tmpCanvas.getContext('2d');
     tmpCtx.font = `${fontSize}px Pokemon`;
-    const textWidth = Math.ceil(
-      Math.max(...lines.map((l) => tmpCtx.measureText(l).width)),
-    );
+    const textWidth = Math.ceil(Math.max(...lines.map((l) => tmpCtx.measureText(l).width)));
 
     const canvas = document.createElement('canvas');
     canvas.width = textWidth + padding * 2;
@@ -86,10 +88,7 @@ export class Text extends SceneObject {
     ctx.strokeStyle = strokeColor;
     ctx.fillStyle = fillColor;
     lines.forEach((line, index) => {
-      const y =
-        canvas.height / 2 -
-        ((lines.length - 1) * fontSize) / 2 +
-        index * fontSize;
+      const y = canvas.height / 2 - ((lines.length - 1) * fontSize) / 2 + index * fontSize;
       ctx.strokeText(line, canvas.width / 2, y);
       ctx.fillText(line, canvas.width / 2, y);
     });
@@ -111,17 +110,23 @@ export class Text extends SceneObject {
     return this;
   }
 
+  /**
+   * Add the sprite mesh to the scene.
+   * @returns {void}
+   */
   draw() {
     if (this.mesh) scene.add(this.mesh);
   }
-  onFrame() {
+  /**
+   * Optional per-frame floating motion.
+   * @param {number} [_deltaSeconds]
+   * @returns {void}
+   */
+  onFrame(_deltaSeconds) {
     if (this.variateMovement) {
-      const offset =
-        Math.sin((Date.now() + this.movementVariationX) / 300) * 0.02;
-      this.position.x =
-        this._startPosition.x + offset * this.movementDirectionX;
-      this.position.y =
-        this._startPosition.y + offset * this.movementDirectionY;
+      const offset = Math.sin((Date.now() + this.movementVariationX) / 300) * 0.02;
+      this.position.x = this._startPosition.x + offset * this.movementDirectionX;
+      this.position.y = this._startPosition.y + offset * this.movementDirectionY;
       if (this.mesh) this.mesh.position.copy(this.position);
     }
 

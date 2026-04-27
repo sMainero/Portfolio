@@ -50,11 +50,17 @@ const KEY_MAPS = {
  */
 let _instance = null;
 
+/**
+ * Keyboard input manager with mapped action keys.
+ */
 export class InputHandler {
   /**
    * @type {boolean} If true, all input is blocked
    */
   keysBlocked = false;
+  /**
+   * Register keyboard listeners and initialize pressed-key buffer.
+   */
   constructor() {
     this.keys = [];
 
@@ -72,22 +78,40 @@ export class InputHandler {
     });
   }
 
+  /**
+   * Add a mapped key to the active pressed set.
+   * @param {string} key
+   * @returns {void}
+   */
   _addKey(key) {
     if (this.keysBlocked) return;
     if (this.keys.indexOf(key) === -1) this.keys.push(key);
   }
 
+  /**
+   * Remove a mapped key from the active pressed set.
+   * @param {string} key
+   * @returns {void}
+   */
   _removeKey(key) {
     const idx = this.keys.indexOf(key);
     if (idx !== -1) this.keys.splice(idx, 1);
   }
 
   /** Removes a key immediately — forces the user to release and re-press to trigger again. */
+  /**
+   * @param {string} key
+   * @returns {void}
+   */
   consumeKey(key) {
     if (this.keysBlocked) return;
     this._removeKey(key);
   }
 
+  /**
+   * Initialize and return singleton InputHandler instance.
+   * @returns {InputHandler}
+   */
   static init() {
     if (!_instance) _instance = new InputHandler();
     return _instance;

@@ -11,7 +11,13 @@ const SOUND_DEFS = [
   { name: 'on', url: `${SOUNDS_PATH}/On.wav`, interval: 100 },
 ];
 
+/**
+ * Sound-effects player with mute controls.
+ */
 export class SfxPlayer extends SoundPlayer {
+  /**
+   * Preload all configured SFX assets.
+   */
   constructor() {
     super();
     for (const { name, url, interval } of SOUND_DEFS) {
@@ -19,10 +25,18 @@ export class SfxPlayer extends SoundPlayer {
     }
   }
 
+  /**
+   * Mute all sound effects.
+   * @returns {void}
+   */
   mute() {
     this.muted = true;
   }
 
+  /**
+   * Unmute sound effects.
+   * @returns {void}
+   */
   unmute() {
     this.muted = false;
   }
@@ -32,4 +46,5 @@ export class SfxPlayer extends SoundPlayer {
   }
 }
 
+/** @type {SfxPlayer} */
 export const sfxPlayer = new SfxPlayer();

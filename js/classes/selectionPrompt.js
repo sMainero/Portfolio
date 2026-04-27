@@ -50,12 +50,20 @@ export class SelectionPrompt {
     }));
   }
 
+  /**
+   * Reset the prompt state to its initial closed state.
+   * @returns {void}
+   */
   reset() {
     this.isOpen = false;
     this._cursor = 0;
     this._answered = false;
   }
 
+  /**
+   * Open the prompt and reset cursor to the first option.
+   * @returns {void}
+   */
   open() {
     if (!this._options.length) return;
     this.isOpen = true;

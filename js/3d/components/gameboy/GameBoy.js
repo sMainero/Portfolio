@@ -94,6 +94,10 @@ export class GameBoy extends SceneObject {
   _aButtonTargetY = 0;
   _bButtonTargetY = 0;
 
+  /**
+   * @param {import('../GameWorld.js').World} world
+   * @param {import('../../../classes/game.js').Game} game
+   */
   constructor(world, game) {
     super();
     this._world = world;
@@ -152,6 +156,10 @@ export class GameBoy extends SceneObject {
     this._bButtonTargetY = this._bButtonRestY + BUTTON_PRESS_DEPTH;
   }
 
+  /**
+   * Toggle GameBoy power state, screen visibility, and screen light intensity.
+   * @returns {void}
+   */
   _togglePower() {
     this._game.input.keysBlocked = !this._game.input.keysBlocked;
     this._screenOn = !this._screenOn;
@@ -200,6 +208,11 @@ export class GameBoy extends SceneObject {
     }
   }
 
+  /**
+   * Convert normalized screen UV coordinates into canvas pixel coordinates.
+   * @param {THREE.Vector2} uv
+   * @returns {{ x: number, y: number }}
+   */
   _uvToCanvas(uv) {
     const u = THREE.MathUtils.clamp(uv.x, 0, 1);
     const v = THREE.MathUtils.clamp(uv.y, 0, 1);
@@ -209,6 +222,12 @@ export class GameBoy extends SceneObject {
     };
   }
 
+  /**
+   * Handle pointer hits against the GameBoy screen plane.
+   * @param {PointerEvent} event
+   * @param {THREE.Intersection} intersection
+   * @returns {boolean}
+   */
   hit(event, intersection) {
     if (cameraButtonState.cameraMode === CAMERA_BUTTON_STATE_RESET) window.switchCameraMode();
     if (!this.screenPlane || intersection.object !== this.screenPlane) {
@@ -265,6 +284,16 @@ export class GameBoy extends SceneObject {
     material.needsUpdate = true;
   }
 
+  /**
+   * Build screen plane transform for the "screen on frame" layout.
+   * @param {THREE.Object3D} targetPosition
+   * @param {THREE.Vector3} targetScale
+   * @returns {{
+   *   planePosition: { x: number, y: number, z: number },
+   *   planeScale: { x: number, y: number, z: number },
+   *   childVisible: boolean
+   * }}
+   */
   setScreenOnFrame = (targetPosition, targetScale) => {
     return {
       planePosition: {
@@ -281,6 +310,16 @@ export class GameBoy extends SceneObject {
     };
   };
 
+  /**
+   * Build screen plane transform for the "screen in frame" layout.
+   * @param {THREE.Vector3} targetPosition
+   * @param {THREE.Vector3} targetScale
+   * @returns {{
+   *   planePosition: { x: number, y: number, z: number },
+   *   planeScale: { x: number, y: number, z: number },
+   *   childVisible: boolean
+   * }}
+   */
   setScreenInFrame = (targetPosition, targetScale) => {
     return {
       planePosition: {
@@ -377,6 +416,11 @@ export class GameBoy extends SceneObject {
     this._world.registerMesh(child, this);
   }
 
+  /**
+   * Create an invisible enlarged collider around the power LED.
+   * @param {THREE.Mesh} powerLedMesh
+   * @returns {void}
+   */
   _createPowerLedHitArea(powerLedMesh) {
     if (this._powerLedHitArea) return;
 
@@ -508,10 +552,24 @@ export class GameBoy extends SceneObject {
     return null;
   }
 
+  /**
+   * Check whether a value lies within [min, max].
+   * @param {number} value
+   * @param {number} min
+   * @param {number} max
+   * @returns {boolean}
+   */
   _isInBox(value, min, max) {
     return value >= min && value <= max;
   }
 
+  /**
+   * Check whether a value lies inside a symmetric range around center.
+   * @param {number} value
+   * @param {number} center
+   * @param {number} halfSize
+   * @returns {boolean}
+   */
   _isNear(value, center, halfSize) {
     return value >= center - halfSize && value <= center + halfSize;
   }
@@ -527,6 +585,13 @@ export class GameBoy extends SceneObject {
     this.dpad.rotation.z += (this._dpadTarget.z - this.dpad.rotation.z) * alpha;
   }
 
+  /**
+   * Smoothly interpolate an action button Y position toward the target.
+   * @param {THREE.Mesh | null} buttonMesh
+   * @param {number} targetY
+   * @param {number} deltaSeconds
+   * @returns {void}
+   */
   _lerpButtonY(buttonMesh, targetY, deltaSeconds) {
     if (!buttonMesh) return;
     const alpha = 1 - Math.exp(-10 * deltaSeconds);

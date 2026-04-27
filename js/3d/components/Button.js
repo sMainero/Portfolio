@@ -16,6 +16,17 @@ import { Game } from '../../classes/game.js';
  * @property {number} targetY - The Y coordinate on the target map to teleport to.
  */
 
+/**
+ * @typedef {Object} ButtonOptions
+ * @property {'text' | 'icon'} [labelType]
+ * @property {string} [labelText]
+ * @property {string} [iconPath]
+ * @property {string} [floatingText]
+ * @property {{ x: number, y: number, z: number }} [position]
+ * @property {(() => void) | null} [onClick]
+ * @property {PortalTransition | null} [portalTransition]
+ */
+
 const spinsAmount = 16;
 
 const spinDuration = 800; // ms for the entire spin
@@ -25,6 +36,11 @@ let _cachedTexture = null;
 /** @type {Record<string, HTMLImageElement>} */
 const _cachedIcons = {};
 
+/**
+ * Preload shared button texture and optional icon image.
+ * @param {string} [iconPath]
+ * @returns {Promise<void[]>}
+ */
 export const preloadButtonAssets = (iconPath) => {
   const promises = [];
 
@@ -67,6 +83,9 @@ export const preloadButtonAssets = (iconPath) => {
   return Promise.all(promises);
 };
 
+/**
+ * 3D interactive button with optional icon/text face and floating label.
+ */
 export class Button extends SceneObject {
   portal = null;
   /**
@@ -114,8 +133,9 @@ export class Button extends SceneObject {
   _floatingTextOffsetY = -0.22;
   /** @type {THREE.Sprite | null} */
   _floatingTextSprite = null;
+  /** @type {(() => void) | null} */
   _onClick = null;
-  /**@type {Game} */
+  /** @type {Game} */
   _game = null;
 
   /**
@@ -128,7 +148,7 @@ export class Button extends SceneObject {
    *
    * @param {World} world
    * @param {Game} game
-   * @param {{portalTransition:PortalTransition}} options
+   * @param {ButtonOptions | string} [options={}]
    *
    */
   constructor(world, game, options = {}) {
@@ -203,6 +223,11 @@ export class Button extends SceneObject {
     }
   }
 
+  /**
+   * Build a text label sprite for the button face.
+   * @param {string} labelText
+   * @returns {Promise<THREE.Sprite>}
+   */
   async _buildTextLabel(labelText) {
     await document.fonts.load('bold 48px Pokemon');
 
@@ -249,6 +274,11 @@ export class Button extends SceneObject {
     return label;
   }
 
+  /**
+   * Build an icon label mesh for the button face.
+   * @param {string} iconPath
+   * @returns {Promise<THREE.Mesh | null>}
+   */
   async _buildIconLabel(iconPath) {
     const image = _cachedIcons[iconPath] ?? (await this._loadImage(iconPath));
     if (!image) return null;
@@ -307,6 +337,11 @@ export class Button extends SceneObject {
     return label;
   }
 
+  /**
+   * Build a floating text sprite rendered below the button mesh.
+   * @param {string} text
+   * @returns {Promise<THREE.Sprite>}
+   */
   async _buildFloatingText(text) {
     await document.fonts.load('bold 36px Pokemon');
 
@@ -350,6 +385,10 @@ export class Button extends SceneObject {
     return label;
   }
 
+  /**
+   * Keep the floating text aligned below the button position.
+   * @returns {void}
+   */
   _syncFloatingTextPosition() {
     if (!this._floatingTextSprite || !this.mesh) return;
     this._floatingTextSprite.position.set(
@@ -359,6 +398,11 @@ export class Button extends SceneObject {
     );
   }
 
+  /**
+   * Load an image asset from URL.
+   * @param {string} src
+   * @returns {Promise<HTMLImageElement | null>}
+   */
   _loadImage(src) {
     return new Promise((resolve) => {
       const image = new Image();
@@ -368,16 +412,29 @@ export class Button extends SceneObject {
     });
   }
 
+  /**
+   * Mark button as hovered and set pointer cursor.
+   * @returns {void}
+   */
   onHoverStart() {
     this._isHovered = true;
     document.body.style.cursor = 'pointer';
   }
 
+  /**
+   * Clear hover state and restore default cursor.
+   * @returns {void}
+   */
   onHoverEnd() {
     this._isHovered = false;
     document.body.style.cursor = '';
   }
 
+  /**
+   * Run one incremental spin animation step.
+   * @param {number} deltaMs
+   * @returns {Promise<void>}
+   */
   async _spin(deltaMs) {
     this._spinTimeAccum += deltaMs;
 
@@ -395,14 +452,19 @@ export class Button extends SceneObject {
     })
       .then(() => {
         this._isSpinning = false;
-        console.log('🚀 ~ Button.js:398 ~ Button ~ _spin ~ this._isSpinning:', this._isSpinning);
+        console.log('🚀 ~ Button.js:455 ~ Button ~ _spin ~ this._isSpinning:', this._isSpinning);
       })
       .catch((err) => {
-        console.log('🚀 ~ Button.js:401 ~ Button ~ _spin ~ r:', r);
+        console.log('🚀 ~ Button.js:458 ~ Button ~ _spin ~ r:', r);
       })
       .finally(() => {});
   }
 
+  /**
+   * Handle raycast click on the button.
+   * @param {Event} e
+   * @returns {void}
+   */
   hit(e) {
     if (this._portalTransition && this._game) {
       const { mapKey, targetX, targetY } = this._portalTransition;
@@ -419,9 +481,18 @@ export class Button extends SceneObject {
     }
     this._isSpinning = true;
   }
+  /**
+   * Button does not map to keyboard keys.
+   * @returns {undefined}
+   */
   resolveKey() {
     return;
   }
+  /**
+   * Per-frame update (look-at, spin, hover bobbing).
+   * @param {number} deltaSeconds
+   * @returns {void}
+   */
   onFrame(deltaSeconds) {
     this._elapsedTime += deltaSeconds;
 
@@ -443,6 +514,10 @@ export class Button extends SceneObject {
     // this._syncFloatingTextPosition();
   }
 
+  /**
+   * Remove button resources from the scene.
+   * @returns {void}
+   */
   remove() {
     if (this._floatingTextSprite) {
       this._scene.remove(this._floatingTextSprite);

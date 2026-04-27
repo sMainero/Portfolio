@@ -31,12 +31,19 @@ export class Menu {
     this._items = items;
   }
 
+  /**
+   * Open menu and reset cursor position.
+   * @returns {void}
+   */
   open() {
     this._cursor = 0;
     this.isOpen = true;
   }
 
   /** @param {import('./game.js').Game} game */
+  /**
+   * @returns {void}
+   */
   close(game) {
     this.isOpen = false;
     game.input.consumeKey('p');
@@ -46,6 +53,9 @@ export class Menu {
   }
 
   /** @param {import('./game.js').Game} game */
+  /**
+   * @returns {void}
+   */
   update(game) {
     if (!this.isOpen) return;
 
@@ -87,6 +97,7 @@ export class Menu {
   /**
    * @param {CanvasRenderingContext2D} context
    * @param {import('./game.js').Game} game
+   * @returns {void}
    */
   draw(context, game) {
     if (!this.isOpen) return;

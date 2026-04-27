@@ -60,6 +60,10 @@ export class Tutorial {
     this.done = this._isDone();
   }
 
+  /**
+   * Check if tutorial has already been completed on this device/profile.
+   * @returns {boolean}
+   */
   _isDone() {
     return localStorage.getItem(`tutorialDone-${this._name}`) === 'true';
   }
@@ -79,6 +83,11 @@ export class Tutorial {
     this._activateStep(0);
   }
 
+  /**
+   * Activate a tutorial step by index.
+   * @param {number} index
+   * @returns {void}
+   */
   _activateStep(index) {
     this._removeCurrentArrow();
     this._cleanupCurrentListeners();
@@ -99,25 +108,19 @@ export class Tutorial {
 
     if (step.arrowOptions) {
       const resolvedArrowText = this._resolveArrowText(step.arrowOrientation);
-      const arrowMotionDirection = this._resolveArrowMotionDirection(
-        step.arrowOrientation,
-      );
+      const arrowMotionDirection = this._resolveArrowMotionDirection(step.arrowOrientation);
       this._currentArrow = new Text({
         ...step.arrowOptions,
         text: resolvedArrowText ?? step.arrowOptions.text,
-        movementDirectionX:
-          step.arrowOptions.movementDirectionX ?? arrowMotionDirection.x,
-        movementDirectionY:
-          step.arrowOptions.movementDirectionY ?? arrowMotionDirection.y,
+        movementDirectionX: step.arrowOptions.movementDirectionX ?? arrowMotionDirection.x,
+        movementDirectionY: step.arrowOptions.movementDirectionY ?? arrowMotionDirection.y,
       });
     }
 
     if (step.completionEvent) {
       const handler = () => this._advanceStep();
       window.addEventListener(step.completionEvent, handler, { once: true });
-      this._cleanupFns.push(() =>
-        window.removeEventListener(step.completionEvent, handler),
-      );
+      this._cleanupFns.push(() => window.removeEventListener(step.completionEvent, handler));
     }
 
     if (step.completionKeys?.length) {
@@ -126,12 +129,14 @@ export class Tutorial {
         if (keys.includes(e.key)) this._advanceStep();
       };
       window.addEventListener('keydown', handler);
-      this._cleanupFns.push(() =>
-        window.removeEventListener('keydown', handler),
-      );
+      this._cleanupFns.push(() => window.removeEventListener('keydown', handler));
     }
   }
 
+  /**
+   * Move tutorial forward to the next step or finish it.
+   * @returns {void}
+   */
   _advanceStep() {
     const next = this._currentStepIndex + 1;
     if (next >= this._steps.length) {
@@ -141,11 +146,19 @@ export class Tutorial {
     }
   }
 
+  /**
+   * Remove the currently displayed arrow object, if any.
+   * @returns {void}
+   */
   _removeCurrentArrow() {
     this._currentArrow?.remove();
     this._currentArrow = null;
   }
 
+  /**
+   * Dispose active step listeners.
+   * @returns {void}
+   */
   _cleanupCurrentListeners() {
     for (const cleanup of this._cleanupFns) cleanup();
     this._cleanupFns = [];
@@ -201,10 +214,19 @@ export class Tutorial {
 
   // --- World entity interface ---
 
+  /**
+   * World lifecycle hook.
+   * @returns {void}
+   */
   onAddedToWorld() {
     this.start();
   }
 
+  /**
+   * Per-frame update hook.
+   * @param {number} deltaSeconds
+   * @returns {void}
+   */
   onFrame(deltaSeconds) {
     this._currentArrow?.onFrame?.(deltaSeconds);
   }

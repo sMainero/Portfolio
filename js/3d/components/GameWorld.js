@@ -46,6 +46,9 @@ export class World {
   _lastTime = 0;
   /** When true, skip all 3D world work and only re-render the canvas texture. */
   _gameMode = false;
+  /**
+   * Create a new constructor.
+   */
   constructor() {
     scene.background = new THREE.Color(0x000000);
     scene.add(directionalLight, ambientLight, particles);
@@ -66,6 +69,11 @@ export class World {
     return this;
   }
 
+  /**
+   * Remove an entity from the world.
+   * @param {object} entity
+   * @returns {this}
+   */
   remove(entity) {
     const index = this._entities.indexOf(entity);
     if (index !== -1) {
@@ -109,20 +117,41 @@ export class World {
   // Input
   // -----------------------------------------------------------------------
 
+  /**
+   * Dispatch a synthetic keyboard event to the game layer.
+   * @param {'keydown' | 'keyup'} type
+   * @param {string} key
+   * @returns {void}
+   */
   _dispatchGameKey(type, key) {
     window.dispatchEvent(new KeyboardEvent(type, { key, bubbles: true, cancelable: true }));
   }
 
   _hoveredEntity = null;
 
+  /**
+   * Update normalized pointer coordinates from the current pointer event.
+   * @param {PointerEvent | MouseEvent} event
+   * @returns {void}
+   */
   _updatePointer(event) {
     const rect = renderer.domElement.getBoundingClientRect();
     this._pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     this._pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   }
+  /**
+   * Mouse move listener used for hover raycasting.
+   * @param {MouseEvent} event
+   * @returns {void}
+   */
   _onMouseMove = (event) => {
     this._updatePointer(event);
   };
+  /**
+   * Raycast scene meshes for a pointer event and return the nearest hit.
+   * @param {PointerEvent | MouseEvent} event
+   * @returns {THREE.Intersection | null}
+   */
   _getHit(event) {
     if (!this._meshToEntity.size) return null;
     this._updatePointer(event);
@@ -133,6 +162,11 @@ export class World {
     return hits[0] ?? null;
   }
 
+  /**
+   * Pointer down handler for press interactions.
+   * @param {PointerEvent} event
+   * @returns {void}
+   */
   _onPointerDown = (event) => {
     const intersection = this._getHit(event);
     if (!intersection) return;
@@ -161,6 +195,11 @@ export class World {
     event.preventDefault();
   };
 
+  /**
+   * Pointer up/cancel handler for release interactions.
+   * @param {PointerEvent} event
+   * @returns {void}
+   */
   _onPointerUp = (event) => {
     const active = this._activeButtons.get(event.pointerId);
     if (!active) return;
@@ -171,6 +210,10 @@ export class World {
     event.preventDefault();
   };
 
+  /**
+   * Bind pointer/mouse listeners to renderer DOM element.
+   * @returns {void}
+   */
   _bindPointerEvents() {
     renderer.domElement.addEventListener('pointerdown', this._onPointerDown, {
       passive: false,
@@ -198,10 +241,19 @@ export class World {
     this._gameMode = true;
   }
 
+  /**
+   * Exit game mode and resume full 3D world updates.
+   * @returns {void}
+   */
   exitGameMode() {
     this._gameMode = false;
   }
 
+  /**
+   * Main animation loop callback.
+   * @param {number} timestamp
+   * @returns {void}
+   */
   _animate = (timestamp) => {
     requestAnimationFrame(this._animate);
 
@@ -273,6 +325,11 @@ export class World {
     composer.render();
   };
 
+  /**
+   * Resize camera and renderer based on the hosting canvas element.
+   * @param {HTMLElement} renderCanvas
+   * @returns {void}
+   */
   _onResize(renderCanvas) {
     camera.aspect = renderCanvas.clientWidth / renderCanvas.clientHeight;
     camera.updateProjectionMatrix();

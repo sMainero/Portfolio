@@ -61,6 +61,7 @@ export class Portal {
    * @param {number} targetX
    * @param {number} targetY
    * @param {Game} game
+   * @returns {void}
    */
   startTransitionTo(mapKey, targetX, targetY, game) {
     game.startMapTransition(mapKey, targetX, targetY);

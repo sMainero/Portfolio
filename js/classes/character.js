@@ -1,7 +1,4 @@
-import {
-  TRAINER_MOVEMENT_SPEED_MS,
-  TRAINER_SPRITE_SIZE,
-} from '../constants/player.js';
+import { TRAINER_MOVEMENT_SPEED_MS, TRAINER_SPRITE_SIZE } from '../constants/player.js';
 import { sharedLoader } from '../utils/assetLoader.js';
 import { ASSETS_BASE } from '../constants/assets.js';
 import { TRAINER_MOVE_STEP, directionDeltas } from '../constants/movement.js';
@@ -10,11 +7,24 @@ import { TILE_SCALING_AMOUNT } from '../constants/tileset.js';
 
 const DEBUG_SCALE = 4;
 
+/**
+ * Sprite atlas paths available for character instances.
+ * @type {{ player: string, mainCharacter: string }}
+ */
 export const CHARACTER_SPRITES = {
   player: `${ASSETS_BASE}sprites/player.png`,
   mainCharacter: `${ASSETS_BASE}sprites/mainCharacter.png`,
 };
 
+/**
+ * Tile-step movement deltas by direction.
+ * @type {{
+ *   up: { dx: number, dy: number, direction: 'up' },
+ *   down: { dx: number, dy: number, direction: 'down' },
+ *   left: { dx: number, dy: number, direction: 'left' },
+ *   right: { dx: number, dy: number, direction: 'right' }
+ * }}
+ */
 export const CHARACTER_MOVEMENT_STEPS = {
   up: { dx: 0, dy: -TRAINER_MOVE_STEP, direction: 'up' },
   down: { dx: 0, dy: TRAINER_MOVE_STEP, direction: 'down' },
@@ -23,11 +33,12 @@ export const CHARACTER_MOVEMENT_STEPS = {
 };
 
 await Promise.all(
-  Object.entries(CHARACTER_SPRITES).map(([key, src]) =>
-    sharedLoader.loadImage(key, src),
-  ),
+  Object.entries(CHARACTER_SPRITES).map(([key, src]) => sharedLoader.loadImage(key, src)),
 );
 
+/**
+ * Base character entity with grid movement and sprite animation.
+ */
 export class Character {
   frames = {
     down: {
@@ -60,6 +71,17 @@ export class Character {
     },
   };
 
+  /**
+   * @param {import('./game.js').Game} game
+   * @param {{
+   *   spriteName?: keyof typeof CHARACTER_SPRITES,
+   *   x?: number | null,
+   *   y?: number | null,
+   *   direction?: 'up' | 'down' | 'left' | 'right',
+   *   enableMovement?: boolean,
+   *   centerOnScreen?: boolean
+   * }} [options]
+   */
   constructor(
     game,
     {
@@ -100,16 +122,30 @@ export class Character {
     this._updateFacing();
   }
 
+  /**
+   * Get the loaded sprite image for this character.
+   * @returns {HTMLImageElement}
+   */
   _trainerSprite() {
     return sharedLoader.get(this.spriteName);
   }
 
+  /**
+   * Update the tile position the character is currently facing.
+   * @returns {void}
+   */
   _updateFacing() {
     const { dx, dy } = directionDeltas[this.direction];
     this.facingX = this.x + dx;
     this.facingY = this.y + dy;
   }
 
+  /**
+   * Check whether this character currently occupies a tile.
+   * @param {number} targetX
+   * @param {number} targetY
+   * @returns {boolean}
+   */
   _occupiesTile(targetX, targetY) {
     const occupiedX = this.isMoving ? this.targetX : this.x;
     const occupiedY = this.isMoving ? this.targetY : this.y;
@@ -117,17 +153,27 @@ export class Character {
     return occupiedX === targetX && occupiedY === targetY;
   }
 
+  /**
+   * Check for collisions against player and NPCs at the given tile.
+   * @param {number} targetX
+   * @param {number} targetY
+   * @returns {boolean}
+   */
   _isCharacterCollisionAt(targetX, targetY) {
     const player = this.game.player;
     if (player && player !== this && player._occupiesTile(targetX, targetY)) {
       return true;
     }
 
-    return this.game.map.npcs.some(
-      (npc) => npc !== this && npc._occupiesTile(targetX, targetY),
-    );
+    return this.game.map.npcs.some((npc) => npc !== this && npc._occupiesTile(targetX, targetY));
   }
 
+  /**
+   * Determine whether the character can move to the target tile.
+   * @param {number} targetX
+   * @param {number} targetY
+   * @returns {boolean}
+   */
   _canMoveTo(targetX, targetY) {
     return !(
       this.game.map.isSolid(targetX, targetY, this.width, this.height) ||
@@ -135,6 +181,12 @@ export class Character {
     );
   }
 
+  /**
+   * Begin a one-tile movement if possible.
+   * @param {'up' | 'down' | 'left' | 'right'} direction
+   * @param {{ playBlockedSfx?: boolean }} [options]
+   * @returns {boolean}
+   */
   _startMovement(direction, { playBlockedSfx = false } = {}) {
     const step = CHARACTER_MOVEMENT_STEPS[direction];
     if (!step || this.isMoving) return false;
@@ -143,10 +195,8 @@ export class Character {
     this.currentFrame = this.frames[step.direction].neutral;
     this._updateFacing();
 
-    const targetX =
-      Math.floor((this.x + step.dx) / TRAINER_MOVE_STEP) * TRAINER_MOVE_STEP;
-    const targetY =
-      Math.floor((this.y + step.dy) / TRAINER_MOVE_STEP) * TRAINER_MOVE_STEP;
+    const targetX = Math.floor((this.x + step.dx) / TRAINER_MOVE_STEP) * TRAINER_MOVE_STEP;
+    const targetY = Math.floor((this.y + step.dy) / TRAINER_MOVE_STEP) * TRAINER_MOVE_STEP;
 
     if (!this._canMoveTo(targetX, targetY)) {
       if (playBlockedSfx) {
@@ -164,6 +214,12 @@ export class Character {
     return true;
   }
 
+  /**
+   * Advance position interpolation for an active movement.
+   * @param {number} deltaTime
+   * @param {number} _fps
+   * @returns {void}
+   */
   _updatePosition(deltaTime, _fps) {
     this.moveElapsed += deltaTime;
     const progress = Math.min(this.moveElapsed / this.moveDuration, 1);
@@ -187,6 +243,11 @@ export class Character {
     }
   }
 
+  /**
+   * Pick sprite animation frame for current movement progress.
+   * @param {number} progress
+   * @returns {void}
+   */
   _updateFrame(progress) {
     const frameSet = this.frames[this.direction];
     if (progress < 0.25 || progress >= 0.75) {
@@ -196,18 +257,40 @@ export class Character {
     }
   }
 
+  /**
+   * Internal movement update tick.
+   * @param {number} deltaTime
+   * @param {number} fps
+   * @returns {boolean}
+   */
   _update(deltaTime, fps) {
     if (!this.isMoving) return false;
     this._updatePosition(deltaTime, fps);
     return this.isMoving;
   }
 
+  /**
+   * Hook called once a movement step finishes.
+   * @returns {void}
+   */
   _onMovementComplete() {}
 
+  /**
+   * Public per-frame character update.
+   * @param {string[]} _input
+   * @param {number} deltaTime
+   * @param {number} fps
+   * @returns {void}
+   */
   update(_input, deltaTime, fps) {
     this._update(deltaTime, fps);
   }
 
+  /**
+   * Draw the character sprite to the screen.
+   * @param {CanvasRenderingContext2D} context
+   * @returns {void}
+   */
   draw(context) {
     const screenX = this._centerOnScreen
       ? this.game.width / 2 - this.width / 2

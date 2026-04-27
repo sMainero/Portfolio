@@ -27,6 +27,11 @@ export class SceneObject {
     if (mediaQuery) this._mediaQuery = mediaQuery;
   }
 
+  /**
+   * Lifecycle hook called after the object is added to the world.
+   * @param {import('./GameWorld.js').World} world
+   * @returns {void}
+   */
   onAddedToWorld(world) {
     if (!this._mediaQuery || !this.mesh) return;
     const mql = window.matchMedia(this._mediaQuery);
@@ -37,6 +42,11 @@ export class SceneObject {
     mql.addEventListener('change', (e) => apply(e.matches));
   }
 
+  /**
+   * Optional click/touch hit handler for subclasses.
+   * @param {PointerEvent} e
+   * @returns {void}
+   */
   hit(e) {}
 
   /** Remove this object's mesh from the scene and dispose GPU resources. */
@@ -50,6 +60,11 @@ export class SceneObject {
     }
   }
 
+  /**
+   * Per-frame update hook.
+   * @param {number} deltaSeconds
+   * @returns {void}
+   */
   onFrame(deltaSeconds) {
     if (this._anchorEnabled) this._updateScreenAnchor();
   }

@@ -1,7 +1,24 @@
 import { Dialog } from './dialog.js';
 import { Character } from './character.js';
 
+/**
+ * Non-player character with optional movement pattern behavior.
+ */
 export class Npc extends Character {
+  /**
+   * @param {import('./game.js').Game} game
+   * @param {{
+   *   name?: string,
+   *   spriteName?: 'player' | 'mainCharacter',
+   *   x?: number | null,
+   *   y?: number | null,
+   *   direction?: 'up' | 'down' | 'left' | 'right',
+   *   dialog?: string,
+   *   movementPattern?: Array<string | { direction: 'up' | 'down' | 'left' | 'right', pauseMs?: number } | { waitMs: number }>,
+   *   movementPatternDelay?: number,
+   *   blockedMoveDelay?: number
+   * }} [options]
+   */
   constructor(
     game,
     {
@@ -34,10 +51,21 @@ export class Npc extends Character {
     this._movementPatternElapsed = 0;
   }
 
+  /**
+   * Check whether player is currently facing this NPC.
+   * @param {import('./player.js').Player} player
+   * @returns {boolean}
+   */
   isFacing(player) {
     return player.facingX === this.x && player.facingY === this.y;
   }
 
+  /**
+   * Rotate NPC idle facing direction toward a target point.
+   * @param {number} targetX
+   * @param {number} targetY
+   * @returns {void}
+   */
   _faceToward(targetX, targetY) {
     const dx = targetX - this.x;
     const dy = targetY - this.y;
@@ -54,15 +82,23 @@ export class Npc extends Character {
     this._updateFacing();
   }
 
+  /**
+   * Advance movement pattern cursor and return current step.
+   * @returns {string | { direction: 'up' | 'down' | 'left' | 'right', pauseMs?: number } | { waitMs: number } | null}
+   */
   _advanceMovementPattern() {
     if (!this.movementPattern.length) return null;
 
     const step = this.movementPattern[this._movementPatternIndex];
-    this._movementPatternIndex =
-      (this._movementPatternIndex + 1) % this.movementPattern.length;
+    this._movementPatternIndex = (this._movementPatternIndex + 1) % this.movementPattern.length;
     return step;
   }
 
+  /**
+   * Update movement pattern timers and execute the next movement step.
+   * @param {number} deltaTime
+   * @returns {void}
+   */
   _runMovementPattern(deltaTime) {
     if (!this.movementPattern.length || this.isMoving) return;
 
@@ -76,9 +112,7 @@ export class Npc extends Character {
     if (typeof step === 'string') {
       const started = this._startMovement(step);
       this._movementPatternElapsed = 0;
-      this.movementPatternDelay = started
-        ? this.moveDuration
-        : this.blockedMoveDelay;
+      this.movementPatternDelay = started ? this.moveDuration : this.blockedMoveDelay;
       return;
     }
 
@@ -91,11 +125,16 @@ export class Npc extends Character {
     const started = this._startMovement(step.direction);
     const pauseMs = step.pauseMs ?? 350;
     this._movementPatternElapsed = 0;
-    this.movementPatternDelay = started
-      ? this.moveDuration + pauseMs
-      : this.blockedMoveDelay;
+    this.movementPatternDelay = started ? this.moveDuration + pauseMs : this.blockedMoveDelay;
   }
 
+  /**
+   * NPC per-frame update, including interaction lock and autonomous movement.
+   * @param {string[]} _input
+   * @param {number} deltaTime
+   * @param {number} fps
+   * @returns {void}
+   */
   update(_input, deltaTime, fps) {
     const isInteracting = this.game.state.activeEvent === this;
     if (isInteracting) {

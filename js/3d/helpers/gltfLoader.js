@@ -27,6 +27,9 @@ let _instance = null;
 
  */
 export class GltfModelLoader {
+  /**
+   * Initialize loader and model registries.
+   */
   constructor() {
     this.progress = 0;
     this.loader = new GLTFLoader();
@@ -38,6 +41,11 @@ export class GltfModelLoader {
     this.loadingPromises = {};
   }
 
+  /**
+   * Load and cache a model by key.
+   * @param {string} modelName
+   * @returns {Promise<import('three/examples/jsm/loaders/GLTFLoader').GLTF>}
+   */
   loadModel(modelName) {
     if (this.loadingPromises[modelName]) {
       return this.loadingPromises[modelName];
@@ -64,10 +72,7 @@ export class GltfModelLoader {
           }
         },
         (error) => {
-          console.error(
-            `[GltfModelLoader] Failed to load "${modelName}":`,
-            error,
-          );
+          console.error(`[GltfModelLoader] Failed to load "${modelName}":`, error);
           reject(error);
         },
       );
@@ -76,6 +81,10 @@ export class GltfModelLoader {
     return promise;
   }
 
+  /**
+   * Initialize singleton loader instance.
+   * @returns {GltfModelLoader}
+   */
   static init() {
     if (!_instance) _instance = new GltfModelLoader();
     return _instance;

@@ -1,4 +1,10 @@
+/**
+ * Persisted gameplay state snapshot and backup helpers.
+ */
 export class State {
+  /**
+   * Initialize default state values.
+   */
   constructor() {
     this.player = {
       x: null,
@@ -14,6 +20,19 @@ export class State {
     this.activeEvent = null;
   }
 
+  /**
+   * @returns {{
+   *   player: {
+   *     x: number | null,
+   *     y: number | null,
+   *     direction: string,
+   *     facingX: number | null,
+   *     facingY: number | null
+   *   },
+   *   mapKey: string | null,
+   *   interactions: Record<string, Record<string, { interacted: boolean }>>
+   * }}
+   */
   get state() {
     return {
       player: {
@@ -28,6 +47,20 @@ export class State {
     };
   }
 
+  /**
+   * Restore state from localStorage if present.
+   * @returns {{
+   *   player: {
+   *     x: number | null,
+   *     y: number | null,
+   *     direction: string,
+   *     facingX: number | null,
+   *     facingY: number | null
+   *   },
+   *   mapKey: string | null,
+   *   interactions: Record<string, Record<string, { interacted: boolean }>>
+   * }}
+   */
   restoreStateBackup() {
     const savedState = window.localStorage.getItem('state');
 
@@ -73,6 +106,21 @@ export class State {
     }
   }
 
+  /**
+   * Merge and persist current state into localStorage.
+   * @param {{
+   *   player?: {
+   *     x: number,
+   *     y: number,
+   *     direction: string,
+   *     facingX: number,
+   *     facingY: number
+   *   },
+   *   mapKey?: string,
+   *   interactions?: Record<string, Record<string, { interacted: boolean }>>
+   * }} [params]
+   * @returns {void}
+   */
   saveStateBackup({ player, mapKey, interactions } = {}) {
     this.update({ player, mapKey, interactions });
     window.localStorage.setItem('state', JSON.stringify(this.state));

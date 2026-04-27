@@ -1,5 +1,11 @@
 import { FADE_DURATION } from './cameraButtonState.js';
 
+/**
+ * Fade HTML camera controls and optionally run a callback after the fade duration.
+ * @param {number} targetOpacity
+ * @param {(() => void)=} onComplete
+ * @returns {void}
+ */
 export const fadeHtmlControls = (targetOpacity, onComplete) => {
   const htmlControls = document.getElementById('htmlCameraControls');
   if (!htmlControls) {

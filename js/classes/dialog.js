@@ -19,6 +19,9 @@ const MAX_CHARS_PER_LINE = Math.floor(
 
 await sharedLoader.loadImage('dialogBorder', `${ASSETS_BASE}borders/BorderTileSet.png`);
 
+/**
+ * Typewriter-style dialog renderer with paging and selection hand-off.
+ */
 export class Dialog {
   /**
    * @param {string} text
@@ -31,12 +34,20 @@ export class Dialog {
     this.charIndex = 0;
   }
 
+  /**
+   * Reset paging and typewriter indices.
+   * @returns {void}
+   */
   reset() {
     // this._wrappedLines = this._wrapLines();
     this.lineOffset = 0;
     this.charIndex = 0;
   }
 
+  /**
+   * Wrap dialog text into fixed-width lines while preserving explicit newlines.
+   * @returns {string[]}
+   */
   _wrapLines() {
     const lines = [];
     for (const segment of this._text.split('\n')) {
@@ -60,6 +71,10 @@ export class Dialog {
     return lines;
   }
 
+  /**
+   * Get currently visible page lines.
+   * @returns {string[]}
+   */
   _visibleLines() {
     return this._wrappedLines.slice(this.lineOffset, this.lineOffset + DIALOG_LINES_PER_PAGE);
   }

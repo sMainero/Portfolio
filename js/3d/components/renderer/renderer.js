@@ -6,6 +6,9 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { scene } from '../scene.js';
 import { camera } from '../camera/camera.js';
 
+/**
+ * Rendering context holding the WebGL renderer and post-processing composer.
+ */
 export class RendererContext {
   /**
    * @type {WebGLRenderer}
@@ -13,6 +16,9 @@ export class RendererContext {
   _renderer = null;
   _composer = null;
 
+  /**
+   * @param {{ canvas: HTMLCanvasElement }} options
+   */
   constructor({ canvas }) {
     this._renderer = new WebGLRenderer({
       canvas,
@@ -47,6 +53,15 @@ export class RendererContext {
   }
 }
 
+/**
+ * Shared renderer context singleton.
+ */
 export const rendererContext = new RendererContext({ canvas: renderCanvas });
+/**
+ * Shared WebGL renderer instance.
+ */
 export const renderer = rendererContext.renderer;
+/**
+ * Shared post-processing composer instance.
+ */
 export const composer = rendererContext.composer;

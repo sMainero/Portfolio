@@ -13,6 +13,9 @@ export class Toast {
   /** @type {(() => void) | null} */
   _onDismiss = null;
 
+  /**
+   * @returns {Toast}
+   */
   static getInstance() {
     if (!Toast._instance) {
       Toast._instance = new Toast();
@@ -20,6 +23,9 @@ export class Toast {
     return Toast._instance;
   }
 
+  /**
+   * Resolve required DOM nodes and bind dismiss handler.
+   */
   constructor() {
     this._element = document.getElementById('toast');
     this._textEl = document.getElementById('toastText');
@@ -32,6 +38,10 @@ export class Toast {
     closeBtn.addEventListener('click', () => this._handleDismiss());
   }
 
+  /**
+   * Handle toast dismiss action.
+   * @returns {void}
+   */
   _handleDismiss() {
     const onDismiss = this._onDismiss;
     this.hide();
@@ -45,12 +55,13 @@ export class Toast {
     this._textEl.textContent = text;
     this._onDismiss = onDismiss;
     this._element.classList.remove('toast--top', 'toast--bottom');
-    this._element.classList.add(
-      position === 'top' ? 'toast--top' : 'toast--bottom',
-    );
+    this._element.classList.add(position === 'top' ? 'toast--top' : 'toast--bottom');
     this._element.classList.remove('toast--hidden');
   }
 
+  /**
+   * @returns {void}
+   */
   hide() {
     this._element.classList.add('toast--hidden');
     this._onDismiss = null;

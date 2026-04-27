@@ -19,7 +19,13 @@ window.addEventListener('pointerdown', _unlockCtx);
  */
 export const unlockAudio = () => _ctx.resume();
 
+/**
+ * Generic audio buffer player with per-sound throttling.
+ */
 export class SoundPlayer {
+  /**
+   * Initialize internal audio buffer caches.
+   */
   constructor() {
     /** @type {Map<string, AudioBuffer>} pre-decoded buffers */
     this._buffers = new Map();
@@ -75,6 +81,10 @@ export class SoundPlayer {
     source.start(0);
   }
 
+  /**
+   * Toggle muted playback state.
+   * @returns {void}
+   */
   toggleMute() {
     this.muted = !this.muted;
   }

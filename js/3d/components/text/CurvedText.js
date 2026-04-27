@@ -43,6 +43,10 @@ export class CurvedText extends Text {
     _pendingArc = null;
   }
 
+  /**
+   * Build curved text mesh group.
+   * @returns {this}
+   */
   build() {
     const arc = _pendingArc;
 
@@ -64,9 +68,7 @@ export class CurvedText extends Text {
 
     lines.forEach((line, lineIndex) => {
       const lineRadius = radius + lineIndex * this.size * lineGap;
-      outerGroup.add(
-        this._buildLine(line, lineRadius, angle, centerVec, fillColor),
-      );
+      outerGroup.add(this._buildLine(line, lineRadius, angle, centerVec, fillColor));
     });
 
     outerGroup.rotation.z = (tilt * Math.PI) / 180;
@@ -143,10 +145,7 @@ export class CurvedText extends Text {
 
       const planeH = this.size;
       const planeW = planeH * (cw / ch);
-      const mesh = new THREE.Mesh(
-        new THREE.PlaneGeometry(planeW, planeH),
-        material,
-      );
+      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(planeW, planeH), material);
 
       mesh.position.set(
         center.x + radius * Math.cos(placementAngle),
@@ -163,6 +162,10 @@ export class CurvedText extends Text {
     return group;
   }
 
+  /**
+   * Add curved text mesh to the scene.
+   * @returns {void}
+   */
   draw() {
     if (this.mesh) scene.add(this.mesh);
   }
