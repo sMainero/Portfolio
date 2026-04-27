@@ -8,7 +8,6 @@ import { State } from './state.js';
 import { Menu } from './menu.js';
 import { EventTrigger } from './eventTrigger.js';
 import { sfxPlayer } from './sounds/sfxPlayer.js';
-import { LINK_GITHUB, LINK_LINKEDIN, LINK_CONTACT } from '../constants/links.js';
 
 const TRANSITION_STEPS = [0.2, 0.6, 1]; // alpha at each step
 const FRAMES_PER_STEP = 4; // game frames to hold each step
@@ -76,18 +75,6 @@ export class Game {
       {
         label: 'FLSCRN',
         action: () => window.toggleFullscreen?.(),
-      },
-      {
-        label: 'GITHUB',
-        action: () => window.open(LINK_GITHUB, '_blank', 'noopener,noreferrer'),
-      },
-      {
-        label: 'LNKDIN',
-        action: () => window.open(LINK_LINKEDIN, '_blank', 'noopener,noreferrer'),
-      },
-      {
-        label: 'CONTCT',
-        action: () => window.open(LINK_CONTACT, '_blank', 'noopener,noreferrer'),
       },
     ]);
     this.fps = 30;
