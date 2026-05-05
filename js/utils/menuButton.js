@@ -12,7 +12,28 @@ export const setupMenuButton = () => {
 
   if (!toggleButton || !modal) return;
 
+  // Tab switching
+  const tabs = modal.querySelectorAll('.portfolio-modal-tab');
+  const panels = modal.querySelectorAll('.portfolio-tab-panel');
+
+  const switchTab = (tabName) => {
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.tab === tabName;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+    panels.forEach((panel) => {
+      const isActive = panel.id === `pm-panel-${tabName}`;
+      panel.classList.toggle('is-hidden', !isActive);
+    });
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+  });
+
   const openModal = () => {
+    switchTab('info');
     modal.classList.add('is-open');
     toggleButton.classList.add('is-active');
   };

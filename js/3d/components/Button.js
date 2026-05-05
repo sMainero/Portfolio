@@ -113,7 +113,7 @@ export class Button extends SceneObject {
       this._position = { x: 0.4, y: 1.2, z: 0.1 };
     } else {
       this._labelType = options.labelType ?? 'text';
-      this._labelText = options.labelText ?? 'START';
+      this._labelText = options.labelText;
       this._iconPath = options.iconPath ?? `${ASSETS_BASE}/icons/camera.svg`;
       this._floatingText = options.floatingText ?? '';
       this._position = options.position ?? { x: 0.4, y: 1.2, z: 0.1 };
@@ -186,6 +186,7 @@ export class Button extends SceneObject {
       spriteHeight: 0.16,
       zOffset: 0.21,
       renderOrder: 1001,
+      fillColor: '#000',
     });
   }
 
@@ -274,12 +275,19 @@ export class Button extends SceneObject {
    * @param {{ text: string, fontSize: number, padding: number, spriteHeight: number, zOffset: number, renderOrder: number }} options
    * @returns {THREE.Sprite | null}
    */
-  _createTextSprite({ text, fontSize, padding, spriteHeight, zOffset, renderOrder }) {
+  _createTextSprite({
+    text,
+    fontSize,
+    padding,
+    spriteHeight,
+    zOffset,
+    renderOrder,
+    fillColor = '#fff',
+  }) {
     const canvas = document.createElement('canvas');
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const actualFontSize = fontSize * dpr;
     const actualPadding = padding * dpr;
-    const fillColor = '#ffffff';
 
     const tmpCtx = canvas.getContext('2d');
     if (!tmpCtx) return null;

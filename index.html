@@ -165,59 +165,138 @@
       aria-modal="true"
       aria-labelledby="portfolioModalTitle"
     >
-      <div class="portfolio-modal pkbd">
-        <header class="portfolio-modal-header">
-          <h2 id="portfolioModalTitle" class="portfolio-modal-title">SEBASTIAN’S PORTFOLIO</h2>
+      <div class="portfolio-modal-outer">
+        <div class="portfolio-modal-tab-strip" role="tablist" aria-label="Portfolio sections">
           <button
-            id="portfolioModalClose"
-            class="portfolio-modal-close pkbd pkbd-clickable"
-            aria-label="Close"
+            class="portfolio-modal-tab pkbd pkbd-clickable is-active"
+            role="tab"
+            id="pm-tab-info"
+            data-tab="info"
+            aria-selected="true"
+            aria-controls="pm-panel-info"
           >
-            ×
+            Info
           </button>
-        </header>
-        <section class="portfolio-modal-bio">
-          <h3 class="hidden display-none">About Sebastian Mainero</h3>
-          <p>My name is <b>SEBASTIAN MAINERO</b> and I'm a <b>FULL STACK DEVELOPER</b>.</p>
-          <p>
-            This is my interactive portfolio, feel free to explore, click around, and see what I've
-            built.
-          </p>
-          <p>
-            Use the buttons on the gameboy or your keyboard to navigate and interact with the game.
-          </p>
-        </section>
-        <div class="portfolio-modal-links">
-          <a
-            href="https://github.com/sMainero/Portfolio"
-            class="portfolio-link pkbd pkbd-clickable"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="assets/icons/github.png" alt="" class="portfolio-link-icon" />
-            <span>GitHub</span>
-          </a>
-
           <button
-            type="button"
-            class="portfolio-link pkbd pkbd-clickable"
-            onclick="window.copyEmailToClipboard('sebastianmperea@gmail.com')"
+            class="portfolio-modal-tab pkbd pkbd-clickable"
+            role="tab"
+            id="pm-tab-controls"
+            data-tab="controls"
+            aria-selected="false"
+            aria-controls="pm-panel-controls"
           >
-            <img src="assets/icons/contact.jpg" alt="" class="portfolio-link-icon" />
-            <span>Contact</span>
+            Controls
           </button>
-          <a
-            href="https://www.linkedin.com/in/sebastian-mainero-39571a1a5/"
-            class="portfolio-link pkbd pkbd-clickable"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img src="assets/icons/linkedin.png" alt="" class="portfolio-link-icon" />
-            <span>LinkedIn</span>
-          </a>
         </div>
-        <p class="portfolio-modal-footer">Sebastianmperea@gmail.com</p>
-        <p class="portfolio-modal-footer">Built with Three.js</p>
+        <div class="portfolio-modal pkbd">
+          <header class="portfolio-modal-header">
+            <h2 id="portfolioModalTitle" class="portfolio-modal-title">SEBASTIAN’S PORTFOLIO</h2>
+            <button
+              id="portfolioModalClose"
+              class="portfolio-modal-close pkbd pkbd-clickable"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </header>
+          <div class="portfolio-modal-panels">
+            <div
+              id="pm-panel-info"
+              class="portfolio-tab-panel"
+              role="tabpanel"
+              aria-labelledby="pm-tab-info"
+            >
+              <section class="portfolio-modal-bio">
+                <h3 class="hidden display-none">About Sebastian Mainero</h3>
+                <p>My name is <b>SEBASTIAN MAINERO</b> and I'm a <b>FULL STACK DEVELOPER</b>.</p>
+                <p>
+                  This is my interactive portfolio, feel free to explore, click around, and see what
+                  I've built.
+                </p>
+                <p>
+                  Use the buttons on the gameboy or your keyboard to navigate and interact with the
+                  game.
+                </p>
+              </section>
+              <div class="portfolio-modal-links">
+                <a
+                  href="https://github.com/sMainero/Portfolio"
+                  class="portfolio-link pkbd pkbd-clickable"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="assets/icons/github.png" alt="" class="portfolio-link-icon" />
+                  <span>GitHub</span>
+                </a>
+
+                <button
+                  type="button"
+                  class="portfolio-link pkbd pkbd-clickable"
+                  onclick="window.copyEmailToClipboard('sebastianmperea@gmail.com')"
+                >
+                  <img src="assets/icons/contact.jpg" alt="" class="portfolio-link-icon" />
+                  <span>Contact</span>
+                </button>
+                <a
+                  href="https://www.linkedin.com/in/sebastian-mainero-39571a1a5/"
+                  class="portfolio-link pkbd pkbd-clickable"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img src="assets/icons/linkedin.png" alt="" class="portfolio-link-icon" />
+                  <span>LinkedIn</span>
+                </a>
+              </div>
+            </div>
+            <div
+              id="pm-panel-controls"
+              class="portfolio-tab-panel is-hidden"
+              role="tabpanel"
+              aria-labelledby="pm-tab-controls"
+            >
+              <div class="pm-controls-list">
+                <div class="pm-controls-row">
+                  <span class="pm-controls-action">Move</span>
+                  <span class="pm-controls-keys">
+                    <kbd class="pm-controls-kbd">↑ ↓ ← →</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">W A S D</kbd>
+                  </span>
+                </div>
+                <div class="pm-controls-row">
+                  <span class="pm-controls-action">Interact</span>
+                  <span class="pm-controls-keys">
+                    <kbd class="pm-controls-kbd">Enter</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">Space</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">A Button</kbd>
+                  </span>
+                </div>
+                <div class="pm-controls-row">
+                  <span class="pm-controls-action">Back</span>
+                  <span class="pm-controls-keys">
+                    <kbd class="pm-controls-kbd">Esc</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">Backspace</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">B Button</kbd>
+                  </span>
+                </div>
+                <div class="pm-controls-row">
+                  <span class="pm-controls-action">In-Game Menu</span>
+                  <span class="pm-controls-keys">
+                    <kbd class="pm-controls-kbd">P</kbd>
+                    <span class="pm-controls-or">/</span>
+                    <kbd class="pm-controls-kbd">Start/Menu Button</kbd>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="portfolio-modal-footer">Sebastianmperea@gmail.com</p>
+          <p class="portfolio-modal-footer">Built with Three.js</p>
+        </div>
       </div>
     </div>
 

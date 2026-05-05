@@ -412,6 +412,95 @@ body {
 }
 
 /* === Portfolio Modal === */
+/* ── Portfolio modal outer wrapper (tabs float above the pkbd box) ── */
+.portfolio-modal-outer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 50vw;
+  width: fit-content;
+}
+
+/* ── Tab strip — sits above the modal, overlaps its top border ── */
+.portfolio-modal-tab-strip {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  margin-left: 0.4em;
+  position: relative;
+  z-index: 20;
+  margin-bottom: -20px;
+}
+.portfolio-modal-tab {
+  font-size: 0.6em;
+  user-select: none;
+  -webkit-user-select: none;
+  background-color: #b3b2b2;
+}
+.portfolio-modal-tab.is-active {
+  background-color: #fff;
+  position: relative;
+  z-index: 21;
+  cursor: default;
+}
+.portfolio-modal-tab.is-active:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Tab panels — CSS grid stacking keeps height fixed to tallest panel ── */
+.portfolio-modal-panels {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.portfolio-tab-panel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.portfolio-tab-panel.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ── Controls panel ── */
+.pm-controls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+}
+.pm-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.65em;
+}
+.pm-controls-action {
+  min-width: 4.5em;
+  font-weight: bold;
+}
+.pm-controls-keys {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  flex-wrap: wrap;
+}
+.pm-controls-kbd {
+  font-family: 'Pokemon', sans-serif;
+  background-color: #ebebeb;
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  padding: 0.1em 0.45em;
+  font-size: inherit;
+  font-style: normal;
+  border-radius: 2px;
+}
+.pm-controls-or {
+  opacity: 0.5;
+  font-size: 0.9em;
+}
+
 .portfolio-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -442,9 +531,7 @@ body {
   gap: 1em;
   max-height: 90vh;
   touch-action: auto;
-
-  max-width: 50vw;
-  width: fit-content;
+  width: 100%;
 }
 .portfolio-modal > * {
   position: relative;
@@ -519,8 +606,10 @@ body {
   }
 }
 @media (max-width: 720px) {
-  .portfolio-modal {
+  .portfolio-modal-outer {
     max-width: 90vw;
+  }
+  .portfolio-modal {
     padding: 1em 1.2em;
   }
   /* .portfolio-modal-links {
