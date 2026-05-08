@@ -11,6 +11,8 @@ let startScreenElement = null;
 /** @type {Record<string, number>} source name → progress 0–100 */
 const loadingSources = {};
 let _domBound = false;
+/** Fixed denominator — set via setTotal() before any sources register. */
+let _totalSources = 0;
 
 const dots = ['', '.', '..', '...'];
 let dotIndex = 0;
@@ -36,7 +38,8 @@ const _flush = () => {
   const values = Object.values(loadingSources);
   if (!values.length) return;
 
-  const percentage = values.reduce((a, b) => a + b, 0) / values.length;
+  const denominator = _totalSources > 0 ? _totalSources : values.length;
+  const percentage = values.reduce((a, b) => a + b, 0) / denominator;
   startLoadingTextInterval();
 
   if (barElement) barElement.style.width = `${percentage}%`;
@@ -61,7 +64,9 @@ export const loadingManager = {
    * @returns {(percentage: number) => void}
    */
   register(name) {
-    if (!startScreenElement || (startScreenElement && !startScreenElement.isConnected)) {
+    // Only skip registration if the start screen is actively disconnected (post-game).
+    // Allowing registration before init() is intentional — updates are buffered.
+    if (startScreenElement && !startScreenElement.isConnected) {
       return;
     }
     loadingSources[name] = 0;
@@ -75,6 +80,15 @@ export const loadingManager = {
    * @param {HTMLElement} btnEl
    * @param {HTMLElement} textEl
    */
+  /**
+   * Set the fixed total number of loading sources.
+   * Call this before any register() calls so the bar denominator never changes.
+   * @param {number} total
+   */
+  setTotal(total) {
+    _totalSources = total;
+  },
+
   init(startScreenEl, barContainerEl, barEl, btnEl, textEl) {
     startScreenElement = startScreenEl;
     barContainerElement = barContainerEl;

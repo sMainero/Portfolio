@@ -3,20 +3,46 @@ import { CHARACTER_SPRITES } from '../classes/character.js';
 import { ASSETS_BASE } from '../constants/assets.js';
 import { loadMainTileset } from '../tilesets/mainTileset.js';
 import { loadLogosTileset } from '../tilesets/logosTileset.js';
-import { sfxPlayer } from '../classes/sounds/sfxPlayer.js';
+import { sfxPlayer, SOUND_DEFS } from '../classes/sounds/sfxPlayer.js';
 import { gltfModelLoader } from '../3d/helpers/gltfLoader.js';
 import { sharedTextureLoader } from './threeTextureLoader.js';
 import * as THREE from 'three';
 
-/**
- * Icon paths used by 3D Button instances. Loaded into sharedLoader so
- * Button._buildIconLabel resolves them synchronously via sharedLoader.get().
- * Keys match the exact iconPath strings passed to Button in 3d/index.js.
- */
+// ---------------------------------------------------------------------------
+// Asset manifests — add/remove entries here to change what gets loaded.
+// TOTAL_LOADING_SOURCES is derived automatically from these arrays.
+// ---------------------------------------------------------------------------
+
+/** 3D models loaded via GltfModelLoader. Each entry = 1 loadingManager source. */
+const GLTF_MODELS = ['gameboy'];
+
+/** THREE.js textures. Each entry = 1 loadingManager source. */
+const THREE_TEXTURES = [
+  {
+    key: 'buttonTexture',
+    src: `${ASSETS_BASE}/button.png`,
+    options: { magFilter: THREE.LinearFilter, colorSpace: THREE.SRGBColorSpace },
+  },
+];
+
+/** Icon images loaded via sharedLoader for use by 3D Button instances. */
 const BUTTON_ICON_PATHS = [
   { key: 'assets/icons/trophy.png', src: 'assets/icons/trophy.png' },
   { key: 'assets/icons/camera.svg', src: 'assets/icons/camera.svg' },
 ];
+
+/**
+ * Total number of distinct named sources that will register with loadingManager.
+ * Derived from the manifest arrays above — update those arrays, not this value.
+ *
+ *   SOUND_DEFS.length        — one source per sound file
+ *   GLTF_MODELS.length       — one source per 3D model
+ *   THREE_TEXTURES.length    — one source per THREE texture
+ *   + 1 (pokemonFont)        — registered in gameBootstrap._preloadFont()
+ *   + 1 (images)             — all 2D images share a single averaged source
+ */
+export const TOTAL_LOADING_SOURCES =
+  SOUND_DEFS.length + GLTF_MODELS.length + THREE_TEXTURES.length + 1 + 1;
 
 /**
  * Cached tileset data objects populated by preloadGameAssets().
@@ -48,6 +74,10 @@ export const getLogosTileset = () => _logosTileset;
  * @returns {Promise<void>}
  */
 export const preloadGameAssets = async () => {
+  // Kick off sound loading synchronously so all sources register with
+  // loadingManager before the first await — prevents bar from going backward.
+  sfxPlayer.preload();
+
   const [mainTileset, logosTileset] = await Promise.all([
     // Tilesets
     loadMainTileset(),
@@ -58,15 +88,12 @@ export const preloadGameAssets = async () => {
     sharedLoader.loadImage('dialogBorder', `${ASSETS_BASE}borders/BorderTileSet.png`),
     // Button icon images — keyed by path so sharedLoader.get(iconPath) works in Button
     ...BUTTON_ICON_PATHS.map(({ key, src }) => sharedLoader.loadImage(key, src)),
-    // 3D button face texture
-    sharedTextureLoader.load('buttonTexture', `${ASSETS_BASE}/button.png`, {
-      magFilter: THREE.LinearFilter,
-      colorSpace: THREE.SRGBColorSpace,
-    }),
-    // Sound effects (decoded AudioBuffers via sharedSoundLoader)
+    // THREE textures — driven by manifest array
+    ...THREE_TEXTURES.map(({ key, src, options }) => sharedTextureLoader.load(key, src, options)),
+    // Sound effects — driven by SOUND_DEFS in sfxPlayer.js
     sfxPlayer.whenReady,
-    // 3D GameBoy model (GltfModelLoader deduplicates if already started in gameBootstrap)
-    gltfModelLoader.instance.loadModel('gameboy'),
+    // 3D models — driven by manifest array
+    ...GLTF_MODELS.map((name) => gltfModelLoader.instance.loadModel(name)),
   ]);
 
   _mainTileset = mainTileset;

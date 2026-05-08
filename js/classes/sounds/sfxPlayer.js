@@ -3,7 +3,7 @@ import { ASSETS_BASE } from '../../constants/assets.js';
 
 const SOUNDS_PATH = `${ASSETS_BASE}sounds`;
 
-const SOUND_DEFS = [
+export const SOUND_DEFS = [
   { name: 'bump', url: `${SOUNDS_PATH}/Bump.wav`, interval: 500 },
   { name: 'confirm', url: `${SOUNDS_PATH}/Confirm.wav`, interval: 0 },
   { name: 'cancel', url: `${SOUNDS_PATH}/Cancel.wav`, interval: 0 },
@@ -21,14 +21,23 @@ export class SfxPlayer extends SoundPlayer {
    */
   _loadingPromise;
 
-  /**
-   * Preload all configured SFX assets.
-   */
   constructor() {
     super();
-    this._loadingPromise = Promise.all(
-      SOUND_DEFS.map(({ name, url, interval }) => this.loadSound(name, url, interval)),
-    ).then(() => {});
+    this._loadingPromise = null;
+  }
+
+  /**
+   * Start loading all SFX assets. Idempotent — safe to call multiple times.
+   * Must be called before `whenReady` is awaited.
+   * @returns {Promise<void>}
+   */
+  preload() {
+    if (!this._loadingPromise) {
+      this._loadingPromise = Promise.all(
+        SOUND_DEFS.map(({ name, url, interval }) => this.loadSound(name, url, interval)),
+      ).then(() => {});
+    }
+    return this._loadingPromise;
   }
 
   /**
@@ -36,7 +45,7 @@ export class SfxPlayer extends SoundPlayer {
    * @returns {Promise<void>}
    */
   get whenReady() {
-    return this._loadingPromise;
+    return this._loadingPromise ?? Promise.resolve();
   }
 
   /**

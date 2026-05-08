@@ -1,13 +1,9 @@
 import { Game } from './classes/game.js';
 import { CANVAS_HEIGHT, CANVAS_SCALE, CANVAS_WIDTH } from './constants/game.js';
 import { MainRoomMap } from './maps/mainRoom/index.js';
-import { preloadGameAssets } from './utils/assetPreloader.js';
 
-// Load all game assets (tilesets, sprites, dialog border) in one place before
-// any game class is instantiated. startGameEngine.js is a dynamic import so
-// this top-level await is isolated and safe across all browsers.
-await preloadGameAssets();
-
+// Assets are fully loaded by the time startGameEngine is called —
+// preloadGameAssets() is awaited in gameBootstrap.js before this runs.
 export const startGameEngine = (canvas) => {
   const ctx = canvas.getContext('2d');
   canvas.width = CANVAS_WIDTH;
