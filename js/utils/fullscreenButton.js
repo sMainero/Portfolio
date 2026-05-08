@@ -18,7 +18,9 @@ const _isFullscreen = () => Boolean(document.fullscreenElement || document.webki
 
 const _syncState = () => {
   const btn = document.getElementById('fullscreenToggleButton');
-  btn?.classList.toggle('is-active', _isFullscreen());
+  const isFs = _isFullscreen();
+  btn?.classList.toggle('is-active', isFs);
+  btn?.setAttribute('aria-pressed', String(isFs));
 };
 
 /**

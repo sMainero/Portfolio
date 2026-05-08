@@ -174,4 +174,8 @@
     transform: translate(2px, -2px);
     box-shadow: 6px 8px 0 var(--border-color);
   }
+    &:focus-visible {
+    outline: 3px solid #4a90d9;
+    outline-offset: 3px;
+  }
 }

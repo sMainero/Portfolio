@@ -25,6 +25,8 @@ export const setupMenuButton = () => {
     panels.forEach((panel) => {
       const isActive = panel.id === `pm-panel-${tabName}`;
       panel.classList.toggle('is-hidden', !isActive);
+      if (isActive) panel.removeAttribute('hidden');
+      else panel.setAttribute('hidden', '');
     });
   };
 
@@ -32,15 +34,57 @@ export const setupMenuButton = () => {
     tab.addEventListener('click', () => switchTab(tab.dataset.tab));
   });
 
+  // Focus trap
+  const _getFocusable = () =>
+    [
+      ...modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    ].filter((el) => !el.closest('[hidden]') && !el.hasAttribute('disabled'));
+
+  const _trapFocus = (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = _getFocusable();
+    if (!focusable.length) {
+      e.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
+  const _handleEscape = (e) => {
+    if (e.key === 'Escape') closeModal();
+  };
+
   const openModal = () => {
     switchTab('info');
     modal.classList.add('is-open');
     toggleButton.classList.add('is-active');
+    toggleButton.setAttribute('aria-expanded', 'true');
+    modal.addEventListener('keydown', _trapFocus);
+    window.addEventListener('keydown', _handleEscape);
+    _getFocusable()[0]?.focus();
   };
 
   const closeModal = () => {
     modal.classList.remove('is-open');
     toggleButton.classList.remove('is-active');
+    toggleButton.setAttribute('aria-expanded', 'false');
+    modal.removeEventListener('keydown', _trapFocus);
+    window.removeEventListener('keydown', _handleEscape);
+    toggleButton.focus();
   };
 
   window.openPortfolioModal = openModal;

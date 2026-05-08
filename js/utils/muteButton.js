@@ -6,6 +6,7 @@ const _syncMuteState = () => {
   const btn = document.getElementById('speakerToggleButton');
   const muted = Boolean(window.sfxPlayer?.isMuted);
   btn?.classList.toggle('is-active', muted);
+  btn?.setAttribute('aria-pressed', String(muted));
 };
 
 /**

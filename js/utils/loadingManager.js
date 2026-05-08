@@ -40,6 +40,7 @@ const _flush = () => {
   startLoadingTextInterval();
 
   if (barElement) barElement.style.width = `${percentage}%`;
+  if (barElement) barElement.setAttribute('aria-valuenow', String(Math.round(percentage)));
   if (percentage >= 100 && buttonElement) {
     clearLoadingTextInterval();
     if (textElement) textElement.textContent = 'System ready';

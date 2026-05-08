@@ -7,4 +7,5 @@
 export const syncCameraButtonState = (isGameMode) => {
   const btn = document.getElementById('htmlCameraControls');
   btn?.classList.toggle('is-active', isGameMode);
+  btn?.setAttribute('aria-pressed', String(isGameMode));
 };

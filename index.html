@@ -15,6 +15,9 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <meta name="title" content="Sebastian Mainero | Full Stack Developer" />
+    <meta name="description" content="Interactive 3D portfolio built with Three.js." />
+
     <meta property="og:title" content="Sebastian Mainero | Full Stack Developer" />
     <meta property="og:description" content="Interactive 3D portfolio built with Three.js." />
     <meta property="og:image" content="https://sebastianmainero.com/public/og-image.png" />
@@ -82,31 +85,49 @@
     <div id="startScreen" class="start-screen">
       <div class="start-screen-iris">
         <div class="start-screen-content">
-          <p class="pkfnt">SEBASTIAN'S PORTFOLIO</p>
-          <div id="loadingBarContainer" class="loading-bar-container">
+          <h2 class="pkfnt">SEBASTIAN'S PORTFOLIO</h2>
+          <div
+            id="loadingBarContainer"
+            class="loading-bar-container"
+            role="status"
+            aria-live="polite"
+          >
             <div class="loading-text-container">
               <p id="loadingText" class="pkfnt loading-text">Booting up</p>
             </div>
             <div class="pkbd loading-bar">
               <div class="loading-bar-track">
-                <div id="loadingBar" class="loading-bar-fill"></div>
+                <div
+                  id="loadingBar"
+                  class="loading-bar-fill"
+                  role="progressbar"
+                  aria-valuenow="0"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  aria-label="Loading progress"
+                ></div>
               </div>
             </div>
           </div>
-          <div
+          <button
             id="startBtn"
             onclick="requestPermissions()"
             class="pkbd pkbd-clickable start-button"
             hidden
           >
-            <p class="start-button-text">Click to start</p>
-          </div>
+            <span class="start-button-text">Click to start</span>
+          </button>
         </div>
       </div>
     </div>
     <main class="canvas-container">
-      <h1 class="hidden display-none">Sebastian Mainero – Full Stack Developer</h1>
-      <canvas class="main-canvas" id="renderCanvas" tabindex="0"></canvas>
+      <h1 class="sr-only">Sebastian Mainero – Full Stack Developer</h1>
+      <canvas
+        class="main-canvas"
+        id="renderCanvas"
+        tabindex="0"
+        aria-label="3D portfolio scene"
+      ></canvas>
       <!-- <canvas id="debug-canvas" width="437" height="1240"></canvas> -->
       <div class="button-bar">
         <button
@@ -114,6 +135,7 @@
           type="button"
           class="camera-switch-button pkbd pkbd-clickable"
           aria-label="Switch camera"
+          aria-pressed="false"
           onclick="switchCameraMode()"
         >
           <img src="assets/icons/camera.svg" alt="" class="camera-switch-icon" />
@@ -123,15 +145,17 @@
           type="button"
           class="speaker-toggle-button pkbd pkbd-clickable"
           aria-label="Toggle sound mute"
+          aria-pressed="false"
           onclick="onSpeakerClick()"
         >
-          <img src="assets/icons/speaker.png" alt="Sound" class="speaker-toggle-icon" />
+          <img src="assets/icons/speaker.png" alt="" class="speaker-toggle-icon" />
         </button>
         <button
           id="fullscreenToggleButton"
           type="button"
           class="fullscreen-toggle-button pkbd pkbd-clickable"
           aria-label="Toggle fullscreen"
+          aria-pressed="false"
           onclick="toggleFullscreen()"
         >
           []
@@ -141,6 +165,7 @@
           type="button"
           class="menu-toggle-button pkbd pkbd-clickable"
           aria-label="Open portfolio"
+          aria-expanded="false"
           onclick="openPortfolioModal()"
         >
           i
@@ -148,7 +173,14 @@
       </div>
     </main>
     <div class="canvas-container game-container">
-      <canvas class="game-canvas" id="mainCanvas" width="480" height="432" tabindex="0"></canvas>
+      <canvas
+        class="game-canvas"
+        id="mainCanvas"
+        width="480"
+        height="432"
+        tabindex="0"
+        aria-label="2D game canvas"
+      ></canvas>
     </div>
 
     <div id="toast" class="toast pkbd toast--hidden" role="status" aria-live="polite">
@@ -207,7 +239,7 @@
               aria-labelledby="pm-tab-info"
             >
               <section class="portfolio-modal-bio">
-                <h3 class="hidden display-none">About Sebastian Mainero</h3>
+                <h3 class="sr-only">About Sebastian Mainero</h3>
                 <p>My name is <b>SEBASTIAN MAINERO</b> and I'm a <b>FULL STACK DEVELOPER</b>.</p>
                 <p>
                   This is my interactive portfolio, feel free to explore, click around, and see what
@@ -253,6 +285,7 @@
               class="portfolio-tab-panel is-hidden"
               role="tabpanel"
               aria-labelledby="pm-tab-controls"
+              hidden
             >
               <div class="pm-controls-list">
                 <div class="pm-controls-row">
@@ -302,15 +335,63 @@
 
     <div class="controls" id="controls">
       <div id="arrowKeys" class="arrowKeys">
-        <div id="arrowKeyUp" class="arrowKey up"></div>
-        <div id="arrowKeyDown" class="arrowKey down"></div>
-        <div id="arrowKeyLeft" class="arrowKey left"></div>
-        <div id="arrowKeyRight" class="arrowKey right"></div>
+        <div
+          id="arrowKeyUp"
+          class="arrowKey up"
+          role="button"
+          tabindex="0"
+          aria-label="Move up"
+        ></div>
+        <div
+          id="arrowKeyDown"
+          class="arrowKey down"
+          role="button"
+          tabindex="0"
+          aria-label="Move down"
+        ></div>
+        <div
+          id="arrowKeyLeft"
+          class="arrowKey left"
+          role="button"
+          tabindex="0"
+          aria-label="Move left"
+        ></div>
+        <div
+          id="arrowKeyRight"
+          class="arrowKey right"
+          role="button"
+          tabindex="0"
+          aria-label="Move right"
+        ></div>
       </div>
       <div id="controlKeys" class="controlKeys">
-        <div id="controlKeyA" class="controlKey a">A</div>
-        <div id="controlKeyB" class="controlKey b">B</div>
-        <div id="controlKeyStart" class="controlKey start">Start</div>
+        <div
+          id="controlKeyA"
+          class="controlKey a"
+          role="button"
+          tabindex="0"
+          aria-label="A button - Interact"
+        >
+          A
+        </div>
+        <div
+          id="controlKeyB"
+          class="controlKey b"
+          role="button"
+          tabindex="0"
+          aria-label="B button - Back"
+        >
+          B
+        </div>
+        <div
+          id="controlKeyStart"
+          class="controlKey start"
+          role="button"
+          tabindex="0"
+          aria-label="Start button - Open menu"
+        >
+          Start
+        </div>
       </div>
     </div>
   </body>
