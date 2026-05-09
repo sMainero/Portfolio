@@ -223,6 +223,18 @@ export class GameBoy extends SceneObject {
   }
 
   /**
+   * Returns true only for meshes that deserve a pointer cursor:
+   * the screen plane, physical buttons, and the power LED.
+   * The case plastic is registered for raycasting but is not a pointer target.
+   * @param {THREE.Intersection} intersection
+   * @returns {boolean}
+   */
+  isCursorTarget(intersection) {
+    if (intersection.object === this.screenPlane) return true;
+    return this.resolveKey(intersection) != null;
+  }
+
+  /**
    * Handle pointer hits against the GameBoy screen plane.
    * @param {PointerEvent} event
    * @param {THREE.Intersection} intersection

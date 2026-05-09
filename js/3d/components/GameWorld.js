@@ -320,6 +320,8 @@ export class World {
         entity?.onHoverStart?.();
         this._hoveredEntity = entity;
       }
+      const isClickable = entity && (entity.isCursorTarget ? entity.isCursorTarget(hit) : true);
+      renderer.domElement.style.cursor = isClickable ? 'pointer' : 'default';
     }
 
     composer.render();
